@@ -35,12 +35,26 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
+        $this->mapBaseRoutes();
+
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
 
         //
     }
+
+    /**
+     * Define the "base" routes for the application.
+     *
+     * @return void
+     */
+    protected function mapBaseRoutes()
+    {
+        Route::namespace($this->namespace)
+            ->group(base_path('routes/base.php'));
+    }
+
 
     /**
      * Define the "web" routes for the application.

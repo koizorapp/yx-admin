@@ -11,14 +11,11 @@
 |
 */
 
+//Route::get('/', function () {
+//    return redirect('/web');
+//});
+
 Route::get('/', function () {
-   return view('index');
-//    return view('welcome');
+    return redirect('/admin');
 });
 
-
-//中心
-Route::get('center/list','CenterController@getCenterList');
-Route::post('center/add','CenterController@addCenter');
-Route::post('center/edit','CenterController@editCenter');
-Route::get('center/del','CenterController@delCenter');
