@@ -15,7 +15,6 @@ class CenterController extends Controller
     {
         $list = CenterService::getCenterList();
         return $this->json($list);
-
     }
 
     /*
