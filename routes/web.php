@@ -36,6 +36,12 @@ Route::post('category/add','CategoryController@addCategory');
 Route::post('category/edit','CategoryController@editCategory');
 Route::get('category/del','CategoryController@delCategory');
 
+//标签
+Route::get('label/list','LabelController@getLabelList');
+Route::post('label/add','LabelController@addLabel');
+Route::post('label/edit','LabelController@editLabel');
+Route::get('label/del','LabelController@delLabel');
+
 
 
 

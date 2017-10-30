@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
+class Label extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'categories';
+    protected $table = 'labels';
 
     protected $fillable = [
-        'name','center_id','code'
+        'name','label_category'
     ];
 }
