@@ -30,6 +30,12 @@ Route::post('personnel/add','PersonnelController@addPersonnel');
 Route::post('personnel/edit','PersonnelController@editPersonnel');
 Route::get('personnel/del','PersonnelController@delPersonnel');
 
+//类别
+Route::get('category/list','CategoryController@getCategoryList');
+Route::post('category/add','CategoryController@addCategory');
+Route::post('category/edit','CategoryController@editCategory');
+Route::get('category/del','CategoryController@delCategory');
+
 
 
 
