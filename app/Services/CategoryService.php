@@ -10,12 +10,22 @@ namespace App\Services;
 
 
 use App\Models\Category;
+use App\Models\Center;
 
 class CategoryService
 {
     public static function getCategoryList()
     {
-        return Category::get()->toArray();
+        $categoryList = Category::get()->toArray();
+        $data = collect($categoryList)->groupBy('center_id')->toArray();
+        $list = [];
+        foreach ($data as $key => $value){
+            $list[$key]['id'] = $key;
+            $list[$key]['name'] = Center::where('id',$key)->value('name');
+            $list[$key]['list'] = $value;
+        }
+        $list = array_values($list);
+        return $list;
     }
 
     public static function addCategory($center_id,$name,$code)

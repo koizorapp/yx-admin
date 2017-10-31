@@ -42,6 +42,20 @@ Route::post('label/add','LabelController@addLabel');
 Route::post('label/edit','LabelController@editLabel');
 Route::get('label/del','LabelController@delLabel');
 
+//诊室
+Route::get('clinics/list','ClinicsController@getClinicsList');
+Route::post('clinics/add','ClinicsController@addClinics');
+Route::post('clinics/edit','ClinicsController@editClinics');
+Route::get('clinics/del','ClinicsController@delClinics');
+
+//设备
+Route::get('equipment/list','EquipmentController@getEquipmentList');
+Route::get('equipment/detail','EquipmentController@getDetail');
+Route::post('equipment/add','EquipmentController@addEquipment');
+Route::post('equipment/edit','EquipmentController@editEquipment');
+Route::get('equipment/del','EquipmentController@delEquipment');
+
+
 
 
 
