@@ -13,6 +13,7 @@ use App\Models\Center;
 use App\Models\Clinics;
 use App\Models\Equipment;
 use App\Models\EquipmentLabel;
+use App\Models\Label;
 use Illuminate\Support\Facades\DB;
 
 class EquipmentService extends CoreService
@@ -47,6 +48,56 @@ class EquipmentService extends CoreService
         return $data;
     }
 
+    public static function getEquipmentListForSearch($center_id,$label_category_id,$label_key_word)
+    {
+        if(empty($center_id) && empty($label_key_word) && empty($label_category_id)){
+            return [];
+        }
+        $label = [];
+        if($label_key_word){
+            $label = Label::where('name','like','%'.$label_key_word.'%')->pluck('id')->toArray();
+        }
+
+
+        $equipment_id_list = new EquipmentLabel();
+        if($center_id){
+            $equipment_id_list = $equipment_id_list->where('center_id',$center_id);
+        }
+        if($label_category_id){
+            $equipment_id_list = $equipment_id_list->where('label_category_id',$label_category_id);
+        }
+        if($label){
+            $equipment_id_list = $equipment_id_list->whereIn('label_id',$label);
+        }
+        $equipment_id_list = $equipment_id_list->groupBy('equipment_id')->pluck('equipment_id')->toArray();
+
+        if(empty($equipment_id_list)){
+            return [];
+        }
+
+        $columns = [
+            'equipments.code',
+            'name',
+            'name_index',
+            'brands',
+            'center_id',
+            'clinics_id'
+        ];
+        $result = Equipment::whereIn('id',$equipment_id_list)->get($columns)->toArray();
+
+        foreach ($result as $key => $value)
+        {
+            $result[$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+            $result[$key]['clinics_name'] = Clinics::where('id',$value['clinics_id'])->value('name');
+            $result[$key]['name'] = $result[$key]['name_index'] == 0 ? $result[$key]['name'] : $result[$key]['name'] . '_' . $result[$key]['name_index'];
+            unset($result[$key]['center_id']);
+            unset($result[$key]['clinics_id']);
+            unset($result[$key]['name_index']);
+        }
+
+        return $result;
+    }
+
     public static function getDetail($equipment_id)
     {
         $equipment = Equipment::find($equipment_id);
@@ -75,6 +126,14 @@ class EquipmentService extends CoreService
         //图片 附件
         $equipment->attachments = [];
         $equipment->images = [];
+
+        //上一条
+        $last_id = Equipment::where('id','<',$equipment_id)->max('id');
+        $equipment->last_id = $last_id;
+        //下一条
+        $next_id = Equipment::where('id','>',$equipment_id)->min('id');
+        $equipment->next_id = $next_id;
+
         return $equipment->toArray();
     }
     public static function addAndEditEquipment($data)

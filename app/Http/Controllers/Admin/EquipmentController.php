@@ -19,6 +19,19 @@ class EquipmentController extends Controller
     }
 
     /*
+     * 搜索列表
+     */
+    protected function getEquipmentListForSearch(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $label_category_id = $request->get('label_category_id');
+        $label_key_word = $request->get('label_key_word');
+//        $current_page = $request->get('current_page');
+        $result = EquipmentService::getEquipmentListForSearch($center_id,$label_category_id,$label_key_word);
+        return $result ? $this->json($result) : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
+    }
+
+    /*
      * 设备详情
      */
     protected function getDetail(Request $request)

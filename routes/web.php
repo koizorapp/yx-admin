@@ -54,6 +54,7 @@ Route::get('equipment/detail','EquipmentController@getDetail');
 Route::post('equipment/add','EquipmentController@addEquipment');
 Route::post('equipment/edit','EquipmentController@editEquipment');
 Route::get('equipment/del','EquipmentController@delEquipment');
+Route::get('equipment/search','EquipmentController@getEquipmentListForSearch');
 
 
 
