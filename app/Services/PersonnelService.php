@@ -9,6 +9,7 @@
 namespace App\Services;
 
 
+use App\Models\Center;
 use App\Models\JobGrade;
 use App\Models\Personnel;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +18,11 @@ class PersonnelService extends CoreService
 {
     public static function getPersonnelList()
     {
-        return Personnel::get()->toArray();
-
+        $list = Personnel::get()->toArray();
+        foreach ($list as $key => $value){
+            $list[$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+        }
+        return $list;
     }
 
     public static function addPersonnel($name,$center_id,$job_grade_name,$hourly_wage)

@@ -56,6 +56,15 @@ Route::post('equipment/edit','EquipmentController@editEquipment');
 Route::get('equipment/del','EquipmentController@delEquipment');
 Route::get('equipment/search','EquipmentController@getEquipmentListForSearch');
 
+//用品
+Route::get('supplies/list','SuppliesController@getSuppliesList');
+Route::get('supplies/detail','SuppliesController@getDetail');
+Route::post('supplies/add','SuppliesController@addSupplies');
+Route::post('supplies/edit','SuppliesController@editSupplies');
+Route::get('supplies/del','SuppliesController@delSupplies');
+Route::get('supplies/search','SuppliesController@getSuppliesListForSearch');
+
+
 
 
 
