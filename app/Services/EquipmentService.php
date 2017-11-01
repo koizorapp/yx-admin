@@ -22,7 +22,7 @@ class EquipmentService extends CoreService
     {
         $columns = [
             'id',
-            'equipments.code',
+            'code',
             'name',
             'name_index',
             'brands',
@@ -77,7 +77,7 @@ class EquipmentService extends CoreService
 
         $columns = [
             'id',
-            'equipments.code',
+            'code',
             'name',
             'name_index',
             'brands',
@@ -123,6 +123,9 @@ class EquipmentService extends CoreService
         }
         $equipment->indications = $indications;
         $equipment->contraindications = $contraindications;
+        $equipment->center_name  = Center::where('id',$equipment->center_id)->value('name');
+        $equipment->clinics_name = Clinics::where('id',$equipment->clinics)->value('name');
+        $equipment->gender_limit_name = self::$gender_data[$equipment->gender_limit];
 
         //图片 附件
         $equipment->attachments = [];

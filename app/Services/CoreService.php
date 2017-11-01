@@ -17,6 +17,8 @@ class CoreService
 
     public static $limit = 15;
 
+    public static $gender_data = ['0' => '不限', '1' => '限男', '2' => '限女'];
+
     public static function getLastMsg()
     {
         return self::$msg;

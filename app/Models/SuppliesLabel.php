@@ -9,5 +9,9 @@ class SuppliesLabel extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'supplies_labels';
 
+    protected $fillable = [
+        'supplies_id','label_id','center_id','label_category_id'
+    ];
 }
