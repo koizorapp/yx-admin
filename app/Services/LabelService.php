@@ -23,7 +23,7 @@ class LabelService
     public static function getLabelList()
     {
         $labelList = Label::get()->toArray();
-        $data = collect($labelList)->groupBy('label_category')->toArray();
+        $data = collect($labelList)->groupBy('label_category_id')->toArray();
         $list = [];
         foreach ($data as $key => $value){
             $list[$key]['id'] = $key;

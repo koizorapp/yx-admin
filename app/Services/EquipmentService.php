@@ -21,6 +21,7 @@ class EquipmentService extends CoreService
     public static function getEquipmentList($current_page)
     {
         $columns = [
+            'id',
             'equipments.code',
             'name',
             'name_index',
@@ -75,6 +76,7 @@ class EquipmentService extends CoreService
         }
 
         $columns = [
+            'id',
             'equipments.code',
             'name',
             'name_index',
