@@ -38,6 +38,7 @@ Route::get('category/del','CategoryController@delCategory');
 
 //标签
 Route::get('label/list','LabelController@getLabelList');
+Route::get('label/selectList','LabelController@getLabelSelectList');
 Route::post('label/add','LabelController@addLabel');
 Route::post('label/edit','LabelController@editLabel');
 Route::get('label/del','LabelController@delLabel');

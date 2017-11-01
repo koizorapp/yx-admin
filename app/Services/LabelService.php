@@ -34,6 +34,11 @@ class LabelService
         return $list;
     }
 
+    public static function getLabelSelectList($label_category_id)
+    {
+        return Label::where('label_category_id',$label_category_id)->get()->toArray();
+    }
+
     public static function addLabel($name,$label_category_id)
     {
         $result = new Label();

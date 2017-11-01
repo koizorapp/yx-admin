@@ -18,6 +18,16 @@ class LabelController extends Controller
     }
 
     /*
+     * 标签列表用于检索
+     */
+    protected function getLabelSelectList(Request $request)
+    {
+        $label_category_id = $request->get('label_category_id');
+        $list = LabelService::getLabelSelectList($label_category_id);
+        return $this->json($list);
+    }
+
+    /*
      * 添加标签
      */
     protected function addLabel(Request $request)
