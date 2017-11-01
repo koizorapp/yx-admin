@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 
 class EquipmentService extends CoreService
 {
-    private static $limit = 15;
     public static function getEquipmentList($current_page)
     {
         $columns = [

@@ -15,6 +15,8 @@ class CoreService
     private static $status = 5000;
     private static $data = [];
 
+    public static $limit = 15;
+
     public static function getLastMsg()
     {
         return self::$msg;
