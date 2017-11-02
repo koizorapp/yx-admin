@@ -49,7 +49,7 @@ class ModuleController extends Controller
         $data['module_equipment']   = json_decode($request->get('module_equipment','[]'),true);//TODO 设备 JSON
         $data['module_supplies']    = json_decode($request->get('module_supplies','[]'),true);//TODO 用品 JSON
         $result = ModuleService::addAndEditModule($data);
-        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
+        return $result ? $this->json() : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
     }
 
     /*

@@ -111,13 +111,13 @@ class EquipmentService extends CoreService
 
         $label_list = self::getEquipmentLabelList($equipment_id);
         if(!empty($label_list) && isset($label_list[1])){
-            $indications = collect($label_list[1])->implode('name',',');
+            $indications = $label_list[1];//collect($label_list[1])->implode('name',',');
         }else{
             $indications = '';
         }
 
         if(!empty($label_list) && isset($label_list[2])){
-            $contraindications = collect($label_list[2])->implode('name',',');
+            $contraindications = $label_list[2];//collect($label_list[2])->implode('name',',');
         }else{
             $contraindications = '';
         }

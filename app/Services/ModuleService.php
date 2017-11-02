@@ -14,6 +14,7 @@ use App\Models\Module;
 use App\Models\ModuleEquipment;
 use App\Models\ModuleJobGrade;
 use App\Models\ModuleLabel;
+use App\Models\ModuleSupplies;
 use Illuminate\Support\Facades\DB;
 
 class ModuleService extends CoreService
@@ -88,7 +89,7 @@ class ModuleService extends CoreService
             foreach ($mergeLabels as $key => $value){
                 $module_label_data = [
                     'label_id' => $value['id'],
-                    'equipment_id' => $module->id,
+                    'module_id' => $module->id,
                     'center_id' => $module->center_id,
                     'label_category_id' => $value['id'],
                 ];
@@ -120,13 +121,14 @@ class ModuleService extends CoreService
                     'supplies_id'  => $value['id'],
                     'module_id'    => $module->id
                 ];
-                $module_supplies = ModuleEquipment::firstOrCreate($module_supplies_data);
+                $module_supplies = ModuleSupplies::firstOrCreate($module_supplies_data);
                 if(!$module_supplies){
                     return self::currentReturnFalse([],'添加模块错误 MODULE-SUPPLIES-ERROR-6000' . __LINE__);
                 }
             }
         }
-
+        DB::commit();
+        return true;
 
         //模块诊室表 TODO 需要做特殊处理
 
