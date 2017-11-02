@@ -121,8 +121,8 @@ class EquipmentService extends CoreService
         }else{
             $contraindications = '';
         }
-        $equipment->indications = $indications;
-        $equipment->contraindications = $contraindications;
+        $equipment->equipment_indications_labels = $indications;
+        $equipment->equipment_contraindications_labels = $contraindications;
         $equipment->center_name  = Center::where('id',$equipment->center_id)->value('name');
         $equipment->clinics_name = Clinics::where('id',$equipment->clinics)->value('name');
         $equipment->gender_limit_name = self::$gender_data[$equipment->gender_limit];

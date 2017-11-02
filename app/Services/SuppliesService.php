@@ -117,8 +117,8 @@ class SuppliesService extends CoreService
         }else{
             $contraindications = '';
         }
-        $supplies->indications = $indications;
-        $supplies->contraindications = $contraindications;
+        $supplies->equipment_indications_labels = $indications;
+        $supplies->equipment_contraindications_labels = $contraindications;
         $supplies->center_name  = Center::where('id',$supplies->center_id)->value('name');
         $supplies->gender_limit_name = self::$gender_data[$supplies->gender_limit];
 
