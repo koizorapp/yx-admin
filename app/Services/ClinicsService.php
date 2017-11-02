@@ -16,16 +16,19 @@ class ClinicsService
 {
     public static function getClinicsList()
     {
-        $clinicsList = Clinics::get()->toArray();
-        $data = collect($clinicsList)->groupBy('center_id')->toArray();
-        $list = [];
-        foreach ($data as $key => $value){
-            $list[$key]['id'] = $key;
-            $list[$key]['name'] = Center::where('id',$key)->value('name');
-            $list[$key]['list'] = $value;
+        $center_list = Center::get(['id','name'])->toArray();
+
+        foreach ($center_list as $key => $value){
+            $center_list[$key]['list'] = $clinics_list = Clinics::where('center_id',$value['id'])->get(['id','name'])->toArray();
         }
-        $list = array_values($list);
-        return $list;
+
+        return $center_list;
+    }
+
+    public static function getClinicsListByCenterId($center_id)
+    {
+        $clinics_list =  Clinics::where('center_id',$center_id)->get(['id','name'])->toArray();
+        return $clinics_list;
     }
 
     public static function addClinics($name,$center_id)

@@ -18,6 +18,16 @@ class ClinicsController extends Controller
     }
 
     /*
+     * 获取中心诊室列表
+     */
+    protected function getClinicsListByCenterId(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $result = ClinicsService::getClinicsListByCenterId($center_id);
+        return $this->json($result);
+    }
+
+    /*
      * 添加诊室
      */
     protected function addClinics(Request $request)

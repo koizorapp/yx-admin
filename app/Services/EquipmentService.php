@@ -150,10 +150,12 @@ class EquipmentService extends CoreService
         }
 
         //设备名字重复自动加一
-        $checkName = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->first(['name','name_index']);
+//        $checkName = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->first(['name','name_index']);
+        $checkName = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
         $name_index = 0;
         if($checkName){
-            $name_index = $checkName->name_index + 1;
+//            $name_index = $checkName->name_index + 1;
+            $name_index = $checkName + 1;
         }
         DB::beginTransaction();
 
@@ -186,8 +188,8 @@ class EquipmentService extends CoreService
         $equipment->description           = $data['description'];
         $equipment->remark                = $data['remark'];
 
-        $saveEquipment = $equipment->save();
-        if(!$saveEquipment){
+        $save_equipment = $equipment->save();
+        if(!$save_equipment){
             return self::currentReturnFalse([],'添加设备错误 EQUIPMENT-ERROR-6000' . __LINE__);
         }
 

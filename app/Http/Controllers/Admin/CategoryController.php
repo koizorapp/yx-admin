@@ -18,6 +18,16 @@ class CategoryController extends Controller
     }
 
     /*
+     * 获取中心类别
+     */
+    protected function getCategoryListByCenterId(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $result = CategoryService::getCategoryListByCenterId($center_id);
+        return $this->json($result);
+    }
+
+    /*
      * 添加类别
      */
     protected function addCategory(Request $request)

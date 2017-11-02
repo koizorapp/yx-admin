@@ -32,6 +32,7 @@ Route::get('personnel/del','PersonnelController@delPersonnel');
 
 //类别
 Route::get('category/list','CategoryController@getCategoryList');
+Route::get('category/listByCenterId','CategoryController@getCategoryListByCenterId');
 Route::post('category/add','CategoryController@addCategory');
 Route::post('category/edit','CategoryController@editCategory');
 Route::get('category/del','CategoryController@delCategory');
@@ -45,6 +46,7 @@ Route::get('label/del','LabelController@delLabel');
 
 //诊室
 Route::get('clinics/list','ClinicsController@getClinicsList');
+Route::get('clinics/listByCenterId','ClinicsController@getClinicsListByCenterId');
 Route::post('clinics/add','ClinicsController@addClinics');
 Route::post('clinics/edit','ClinicsController@editClinics');
 Route::get('clinics/del','ClinicsController@delClinics');
@@ -64,6 +66,16 @@ Route::post('supplies/add','SuppliesController@addSupplies');
 Route::post('supplies/edit','SuppliesController@editSupplies');
 Route::get('supplies/del','SuppliesController@delSupplies');
 Route::get('supplies/search','SuppliesController@getSuppliesListForSearch');
+
+//模块
+Route::get('module/list','ModuleController@getModuleList');
+Route::get('module/detail','ModuleController@getDetail');
+Route::post('module/add','ModuleController@addModule');
+Route::post('module/edit','ModuleController@editModule');
+Route::get('module/del','ModuleController@delModule');
+Route::get('module/search','ModuleController@getModuleListForSearch');
+Route::get('job-grade/list','ModuleController@getJobGrade');
+Route::get('module/check_gender_age','ModuleController@checkGenderAge');
 
 
 
