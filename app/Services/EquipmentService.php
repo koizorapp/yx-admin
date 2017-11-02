@@ -143,19 +143,17 @@ class EquipmentService extends CoreService
     public static function addAndEditEquipment($data)
     {
         //数据校验
-        $checkCode = Equipment::where('code',$data['code'])->exists();
-        if($checkCode){
+        $check_code = Equipment::where('code',$data['code'])->exists();
+        if($check_code && !isset($data['equipment_id'])){
             return self::currentReturnFalse([],'设备代码重复,请核实.');
 //            return false;//该设备编号已经存在 请核实  或者是前端输入完成ajax校验
         }
 
         //设备名字重复自动加一
-//        $checkName = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->first(['name','name_index']);
-        $checkName = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
+        $check_name = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
         $name_index = 0;
-        if($checkName){
-//            $name_index = $checkName->name_index + 1;
-            $name_index = $checkName + 1;
+        if($check_name){
+            $name_index = $check_name + 1;
         }
         DB::beginTransaction();
 
@@ -170,23 +168,23 @@ class EquipmentService extends CoreService
         $equipment->code                  = $data['code'];
         $equipment->name                  = $data['name']; //TODO $checkName
         $equipment->name_index            = $name_index;
-        $equipment->english_name          = $data['english_name'];
-        $equipment->storage_name          = $data['storage_name'];
+        $equipment->english_name          = empty($data['english_name']) ? '' : $data['english_name'];
+        $equipment->storage_name          = empty($data['storage_name']) ? '' : $data['storage_name'];
         $equipment->center_id             = $data['center_id'];
-        $equipment->brands                = $data['brands'];
-        $equipment->production_area       = $data['production_area'];
-        $equipment->specifications        = $data['specifications'];
-        $equipment->purchase_price        = $data['purchase_price'];
-        $equipment->market_price          = $data['market_price'];
-        $equipment->once_cost             = $data['once_cost'];
-        $equipment->clinics_id            = $data['clinics_id'];//TODO 数据库改字段存储为 诊室ID
+        $equipment->brands                = empty($data['brands']) ? '' : $data['brands'];
+        $equipment->production_area       = empty($data['production_area']) ? '' : $data['production_area'];
+        $equipment->specifications        = empty($data['specifications']) ? '' : $data['specifications'];
+        $equipment->purchase_price        = empty($data['purchase_price']) ? '' : $data['purchase_price'];
+        $equipment->market_price          = empty($data['market_price']) ? '' : $data['market_price'];
+        $equipment->once_cost             = empty($data['once_cost']) ? '' : $data['once_cost'];
+        $equipment->clinics_id            = empty($data['clinics_id']) ? 0 : $data['clinics_id'];
         $equipment->min_age_limit         = $data['min_age_limit'];
         $equipment->max_age_limit         = $data['max_age_limit'];
         $equipment->gender_limit          = $data['gender_limit'];
-        $equipment->considerations        = $data['considerations'];
-        $equipment->adverse_reaction      = $data['adverse_reaction'];
-        $equipment->description           = $data['description'];
-        $equipment->remark                = $data['remark'];
+        $equipment->considerations        = empty($data['considerations']) ? '' : $data['considerations'];
+        $equipment->adverse_reaction      = empty($data['adverse_reaction']) ? '' : $data['adverse_reaction'];
+        $equipment->description           = empty($data['description']) ? '' : $data['description'];
+        $equipment->remark                = empty($data['remark']) ? '' : $data['remark'];
 
         $save_equipment = $equipment->save();
         if(!$save_equipment){

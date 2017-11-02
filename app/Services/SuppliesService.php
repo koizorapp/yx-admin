@@ -146,51 +146,51 @@ class SuppliesService extends CoreService
     public static function addAndEditSupplies($data)
     {
         //数据校验
-        $checkCode = Supplies::where('code',$data['code'])->exists();
-        if($checkCode){
+        $check_code = Supplies::where('code',$data['code'])->exists();
+        if($check_code && !isset($data['supplies_id'])){
             return self::currentReturnFalse([],'设备代码重复,请核实.');
 //            return false;//该设备编号已经存在 请核实  或者是前端输入完成ajax校验
         }
 
         //设备名字重复自动加一
-        $checkName = Supplies::where('name',$data['name'])->where('center_id',$data['center_id'])->first(['name','name_index']);
+        $check_name = Supplies::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
         $name_index = 0;
-        if($checkName){
-            $name_index = $checkName->name_index + 1;
+        if($check_name){
+            $name_index = $check_name + 1;
         }
         DB::beginTransaction();
 
         //更新设备
         if(isset($data['supplies_id'])){
-            $equipment = Supplies::find($data['supplies_id']);
+            $supplies = Supplies::find($data['supplies_id']);
         }else{
             //添加设备表
-            $equipment = new Supplies();
+            $supplies = new Supplies();
         }
 
-        $equipment->code                  = $data['code'];
-        $equipment->name                  = $data['name'];
-        $equipment->name_index            = $name_index;
-        $equipment->english_name          = $data['english_name'];
-        $equipment->storage_name          = $data['storage_name'];
-        $equipment->center_id             = $data['center_id'];
-        $equipment->brands                = $data['brands'];
-        $equipment->production_area       = $data['production_area'];
-        $equipment->specifications        = $data['specifications'];
-        $equipment->purchase_price        = $data['purchase_price'];
-        $equipment->market_price          = $data['market_price'];
-        $equipment->once_cost             = $data['once_cost'];
-        $equipment->unit                  = $data['unit'];
-        $equipment->min_age_limit         = $data['min_age_limit'];
-        $equipment->max_age_limit         = $data['max_age_limit'];
-        $equipment->gender_limit          = $data['gender_limit'];
-        $equipment->considerations        = $data['considerations'];
-        $equipment->adverse_reaction      = $data['adverse_reaction'];
-        $equipment->description           = $data['description'];
-        $equipment->remark                = $data['remark'];
+        $supplies->code                  = $data['code'];
+        $supplies->name                  = $data['name'];
+        $supplies->name_index            = $name_index;
+        $supplies->english_name          = empty($data['english_name']) ? '' : $data['english_name'];
+        $supplies->storage_name          = empty($data['storage_name']) ? '' : $data['storage_name'];
+        $supplies->center_id             = $data['center_id'];
+        $supplies->brands                = empty($data['brands']) ? '' : $data['brands'];
+        $supplies->production_area       = empty($data['production_area']) ? '' : $data['production_area'];
+        $supplies->specifications        = empty($data['specifications']) ? '' : $data['specifications'];
+        $supplies->purchase_price        = empty($data['purchase_price']) ? '' : $data['purchase_price'];
+        $supplies->market_price          = empty($data['market_price']) ? '' : $data['market_price'];
+        $supplies->once_cost             = empty($data['once_cost']) ? '' : $data['once_cost'];
+        $supplies->unit                  = empty($data['unit']) ? '' : $data['unit'];
+        $supplies->min_age_limit         = $data['min_age_limit'];
+        $supplies->max_age_limit         = $data['max_age_limit'];
+        $supplies->gender_limit          = $data['gender_limit'];
+        $supplies->considerations        = empty($data['considerations']) ? '' : $data['considerations'];
+        $supplies->adverse_reaction      = empty($data['adverse_reaction']) ? '' : $data['adverse_reaction'];
+        $supplies->description           = empty($data['description']) ? '' : $data['description'];
+        $supplies->remark                = empty($data['remark']) ? '' : $data['remark'];
 
-        $saveEquipment = $equipment->save();
-        if(!$saveEquipment){
+        $save_supplies = $supplies->save();
+        if(!$save_supplies){
             return self::currentReturnFalse([],'添加用品错误 SUPPLIES-ERROR-6000' . __LINE__);
         }
 
@@ -202,14 +202,14 @@ class SuppliesService extends CoreService
         $mergeLabels = array_merge($data['indications'],$data['contraindications']);
         if(!empty($mergeLabels)){
             foreach ($mergeLabels as $key => $value){
-                $equipment_label_data = [
+                $supplies_label_data = [
                     'label_id' => $value['id'],
-                    'supplies_id' => $equipment->id,
-                    'center_id' => $equipment->center_id,
+                    'supplies_id' => $supplies->id,
+                    'center_id' => $supplies->center_id,
                     'label_category_id' => $value['id'],
                 ];
-                $equipment_label = SuppliesLabel::firstOrCreate($equipment_label_data);
-                if(!$equipment_label){
+                $supplies_label = SuppliesLabel::firstOrCreate($supplies_label_data);
+                if(!$supplies_label){
                     return self::currentReturnFalse([],'添加用品错误 SUPPLIES-LABEL-ERROR-6000' . __LINE__);
                 }
             }
