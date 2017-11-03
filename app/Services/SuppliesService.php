@@ -54,9 +54,6 @@ class SuppliesService extends CoreService
 
     public static function getSuppliesListForSearch($center_id,$label_category_id,$label_key_word)
     {
-        if(empty($center_id) && empty($label_key_word) && empty($label_category_id)){
-            return [];
-        }
         $label = [];
         if($label_key_word){
             $label = Label::where('name','like','%'.$label_key_word.'%')->pluck('id')->toArray();
