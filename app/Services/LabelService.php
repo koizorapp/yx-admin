@@ -36,6 +36,9 @@ class LabelService
 
     public static function getLabelSelectList($label_category_id)
     {
+        if($label_category_id == 0){
+            return Label::get()->toArray();
+        }
         return Label::where('label_category_id',$label_category_id)->get()->toArray();
     }
 

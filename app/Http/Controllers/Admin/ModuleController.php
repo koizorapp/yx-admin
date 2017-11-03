@@ -115,10 +115,10 @@ class ModuleController extends Controller
      */
     protected function checkGenderAge(Request $request)
     {
-        $equipment_list = $request->get('equipment_list');
-        $supplies_list  = $request->get('supplies_list');
+        $equipment_list = json_decode($request->get('equipment_list'),true);
+        $supplies_list  = json_decode($request->get('supplies_list'),true);
         $result = ModuleService::checkGenderAge($equipment_list,$supplies_list);
-        return $this->json($result);
+        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());;
 
     }
 
