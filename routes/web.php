@@ -48,6 +48,7 @@ Route::get('label/del','LabelController@delLabel');
 Route::get('clinics/list','ClinicsController@getClinicsList');
 Route::get('clinics/listByCenterId','ClinicsController@getClinicsListByCenterId');
 Route::post('clinics/add','ClinicsController@addClinics');
+Route::post('clinics/addParallel','ClinicsController@addParallelClinics');
 Route::post('clinics/edit','ClinicsController@editClinics');
 Route::get('clinics/del','ClinicsController@delClinics');
 

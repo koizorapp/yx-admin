@@ -12,6 +12,6 @@ class Clinics extends Model
     protected $table = 'clinics';
 
     protected $fillable = [
-        'name','center_id'
+        'name','center_id','mark'
     ];
 }

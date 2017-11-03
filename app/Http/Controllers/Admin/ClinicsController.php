@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Clinics;
 use App\Services\ClinicsService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -35,6 +36,18 @@ class ClinicsController extends Controller
         $name = $request->get('name');
         $center_id = $request->get('center_id');
         $result = ClinicsService::addClinics($name,$center_id);
+        return $result ? $this->json() : $this->json([], 'error', 5000);
+    }
+
+    /*
+     * 添加平行诊室
+     */
+    protected function addParallelClinics(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $name = $request->get('name');
+        $clinics_list = json_decode($request->get('clinics_list'),true);
+        $result = ClinicsService::addParallelClinics($center_id,$name,$clinics_list);
         return $result ? $this->json() : $this->json([], 'error', 5000);
     }
 

@@ -26,7 +26,7 @@ class ModuleService extends CoreService
 
     }
 
-    public static function getDetail()
+    public static function getDetail($module_id)
     {
 
     }
@@ -69,6 +69,14 @@ class ModuleService extends CoreService
 
         if(!$save_module){
             return self::currentReturnFalse([],'添加模块错误 MODULE-ERROR-6000' . __LINE__);
+        }
+
+        if(isset($data['module_id'])){
+            ModuleJobGrade::where('module_id',$data['module_id'])->delete();
+            ModuleLabel::where('module_id',$data['module_id'])->delete();
+            ModuleEquipment::where('module_id',$data['module_id'])->delete();
+            ModuleSupplies::where('module_id',$data['module_id'])->delete();
+            ModuleClinics::where('module_id',$data['module_id'])->delete();
         }
 
         //模块职位等级关联表
