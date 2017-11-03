@@ -46,6 +46,12 @@ class SuppliesService extends CoreService
         return $data;
     }
 
+    public static function getSuppliesListByCenterId($center_id)
+    {
+        $list = Supplies::where('center_id',$center_id)->get(['id','name'])->toArray();
+        return $list;
+    }
+
     public static function getSuppliesListForSearch($center_id,$label_category_id,$label_key_word)
     {
         if(empty($center_id) && empty($label_key_word) && empty($label_category_id)){
@@ -160,11 +166,11 @@ class SuppliesService extends CoreService
         }
         DB::beginTransaction();
 
-        //更新设备
+        //更新用品
         if(isset($data['supplies_id'])){
             $supplies = Supplies::find($data['supplies_id']);
         }else{
-            //添加设备表
+            //添加用品表
             $supplies = new Supplies();
         }
 
@@ -198,8 +204,16 @@ class SuppliesService extends CoreService
             SuppliesLabel::where('supplies_id',$data['supplies_id'])->delete();
             //TODO 图片 附件
         }
-        //添加设备标签表
-        $mergeLabels = array_merge($data['indications'],$data['contraindications']);
+        //添加用品标签表
+        if(!empty($data['indications']) && !empty($data['contraindications'])){
+            $mergeLabels = array_merge($data['indications'],$data['contraindications']);
+        }else if(empty($data['indications']) && !empty($data['contraindications'])){
+            $mergeLabels = $data['contraindications'];
+        }else if(!empty($data['indications']) && empty($data['contraindications'])){
+            $mergeLabels = $data['indications'];
+        }else{
+            $mergeLabels = [];
+        }
         if(!empty($mergeLabels)){
             foreach ($mergeLabels as $key => $value){
                 $supplies_label_data = [

@@ -19,6 +19,16 @@ class SuppliesController extends Controller
     }
 
     /*
+     * 获取中心用品列表
+     */
+    protected function getSuppliesListByCenterId(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $list = SuppliesService::getSuppliesListByCenterId($center_id);
+        return $this->json($list);
+    }
+
+    /*
      * 搜索用品列表
      */
     protected function getSuppliesListForSearch(Request $request)

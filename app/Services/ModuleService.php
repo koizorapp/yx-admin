@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Models\Center;
+use App\Models\ClinicsGroup;
 use App\Models\Module;
 use App\Models\ModuleClinics;
 use App\Models\ModuleEquipment;
@@ -131,39 +132,51 @@ class ModuleService extends CoreService
 
 
         //模块诊室表 TODO 需要做特殊处理
-
-
         if(!empty($data['module_clinics'])){
-            foreach (($data['module_clinics']) as $key => $value){
-                $module_clinics_data = [
-                    'clinics_id' => $value['id'],
-                    'module_id'  => $module->id
-                ];
-                $module_clinics = ModuleClinics::firstOrCreate($module_clinics_data);
-                if(!$module_clinics){
-                    return self::currentReturnFalse([],'添加模块错误 MODULE-CLINICS-ERROR-6000' . __LINE__);
+            $clinics_mark = [];
+            $clinics_id   = [];
+            foreach ($data['module_clinics'] as $key => $value){
+                if($value['mark'] == 1){
+                    $clinics_mark[] = $value;
+                }else{
+                    $clinics_id[] = $value['id'];
                 }
             }
+
+            $clinics_mark_id = collect($clinics_mark)->pluck('id')->all();
+            $clinics_group_id = [];
+            if($clinics_mark_id){
+                //查询平行诊室下的诊室列表
+                $clinics_group_id = ClinicsGroup::whereIn('parent_clinics_id',$clinics_mark_id)->groupBy('clinics_id')->pluck('clinics_id')->toArray();
+
+            }
+            foreach ($clinics_id as $key => $value){
+                if(in_array($value,$clinics_group_id)){
+                    unset($clinics_id[$key]);
+                }
+            }
+
+            $clinics_id = array_unique(array_merge($clinics_id,$clinics_mark_id));
+
+            if(!empty($clinics_id)){
+                foreach ($clinics_id as $key => $value){
+                    $module_clinics_data = [
+                        'clinics_id' => $value,
+                        'module_id'  => $module->id
+                    ];
+                    $module_clinics = ModuleClinics::firstOrCreate($module_clinics_data);
+                    if(!$module_clinics){
+                        return self::currentReturnFalse([],'添加模块错误 MODULE-CLINICS-ERROR-6000' . __LINE__);
+                    }
+                }
+            }
+
         }
 
         DB::commit();
         return true;
 
-        //中心设备列表
-        //中心用品列表
-        //录入加模块和
-
-
-
-
-
-
-
-
-
-
-
-
+        //录入加模块和 TODO 详情
     }
 
     public static function delModule()

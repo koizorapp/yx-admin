@@ -19,6 +19,16 @@ class EquipmentController extends Controller
     }
 
     /*
+     * 中心设备列表
+     */
+    protected function getEquipmentListByCenterId(Request $request)
+    {
+        $center_id = $request->get('center_id');
+        $list = EquipmentService::getEquipmentListByCenterId($center_id);
+        return $this->json($list);
+    }
+
+    /*
      * 搜索列表
      */
     protected function getEquipmentListForSearch(Request $request)

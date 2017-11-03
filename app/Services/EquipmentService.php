@@ -48,6 +48,12 @@ class EquipmentService extends CoreService
         return $data;
     }
 
+    public static function getEquipmentListByCenterId($center_id)
+    {
+        $list = Equipment::where('center_id',$center_id)->get(['id','name'])->toArray();
+        return $list;
+    }
+
     public static function getEquipmentListForSearch($center_id,$label_category_id,$label_key_word)
     {
         if(empty($center_id) && empty($label_key_word) && empty($label_category_id)){
@@ -196,7 +202,15 @@ class EquipmentService extends CoreService
             //TODO 图片 附件
         }
         //添加设备标签表
-        $mergeLabels = array_merge($data['indications'],$data['contraindications']);
+        if(!empty($data['indications']) && !empty($data['contraindications'])){
+            $mergeLabels = array_merge($data['indications'],$data['contraindications']);
+        }else if(empty($data['indications']) && !empty($data['contraindications'])){
+            $mergeLabels = $data['contraindications'];
+        }else if(!empty($data['indications']) && empty($data['contraindications'])){
+            $mergeLabels = $data['indications'];
+        }else{
+            $mergeLabels = [];
+        }
         if(!empty($mergeLabels)){
             foreach ($mergeLabels as $key => $value){
                 $equipment_label_data = [

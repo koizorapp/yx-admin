@@ -48,6 +48,7 @@ class ModuleController extends Controller
         $data['contraindications']  = json_decode($request->get('module_contraindications_labels','[]'),true);//TODO 禁忌症 JSON
         $data['module_equipment']   = json_decode($request->get('module_equipment','[]'),true);//TODO 设备 JSON
         $data['module_supplies']    = json_decode($request->get('module_supplies','[]'),true);//TODO 用品 JSON
+        $data['module_clinics']     = json_decode($request->get('module_clinics','[]'),true);//TODO 用品 JSON
         $result = ModuleService::addAndEditModule($data);
         return $result ? $this->json() : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
     }
