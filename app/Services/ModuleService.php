@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Models\Center;
 use App\Models\Module;
+use App\Models\ModuleClinics;
 use App\Models\ModuleEquipment;
 use App\Models\ModuleJobGrade;
 use App\Models\ModuleLabel;
@@ -127,10 +128,30 @@ class ModuleService extends CoreService
                 }
             }
         }
+
+
+        //模块诊室表 TODO 需要做特殊处理
+
+
+        if(!empty($data['module_clinics'])){
+            foreach (($data['module_clinics']) as $key => $value){
+                $module_clinics_data = [
+                    'clinics_id' => $value['id'],
+                    'module_id'  => $module->id
+                ];
+                $module_clinics = ModuleClinics::firstOrCreate($module_clinics_data);
+                if(!$module_clinics){
+                    return self::currentReturnFalse([],'添加模块错误 MODULE-CLINICS-ERROR-6000' . __LINE__);
+                }
+            }
+        }
+
         DB::commit();
         return true;
 
-        //模块诊室表 TODO 需要做特殊处理
+        //中心设备列表
+        //中心用品列表
+        //录入加模块和
 
 
 
