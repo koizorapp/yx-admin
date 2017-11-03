@@ -31,9 +31,11 @@ class ClinicsService extends CoreService
                 foreach ($clinics_group[1] as $k => $v){
                     $clinics_group_list = ClinicsGroup::leftJoin('clinics','clinics.id','=','clinics_group.clinics_id')
                         ->where('parent_clinics_id',$v['id'])
-                        ->pluck('name')->toArray();
-                    $clinics_group_list = collect($clinics_group_list)->implode(',');
-                    $clinics_group[1][$k]['name'] = $v['name'] . '(' . $clinics_group_list  . ')';
+                        ->select(DB::raw('yx_clinics.id,yx_clinics.name'))
+                        ->get()->toArray();
+//                    $clinics_group_list = collect($clinics_group_list)->implode(',');
+//                    $clinics_group[1][$k]['name'] = $v['name'] . '(' . $clinics_group_list  . ')';
+                    $clinics_group[1][$k]['list'] = $clinics_group_list;
 
                 }
                 $center_list[$key]['parallel_clinics_list']  = $clinics_group[1];

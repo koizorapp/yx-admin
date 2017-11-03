@@ -28,7 +28,16 @@ class ModuleService extends CoreService
 
     public static function getDetail($module_id)
     {
+        $module = Module::find($module_id);
+        $module->code = $module->code . '_' .str_pad($module->code_index,3,"0",STR_PAD_LEFT);
+        unset($module->code_index);
+        $module->name = $module->name_index == 0 ? $module->name : $module->name . '_' . $module->name_index;
+        unset($module->name_index);
+        $module->center_name = Center::where('id',$module->center_id)->value('name');
+        $module->job_grades = '';
 
+
+        print_r($module);die;
     }
 
     public static function addAndEditModule($data)
@@ -48,7 +57,9 @@ class ModuleService extends CoreService
         //模块表
         $maxIndex = Module::where('center_id',$data['center_id'])->max('code_index');
         $module->name               = $data['name'];
-        $module->code_index         = str_pad($maxIndex+1,3,"0",STR_PAD_LEFT);
+        if(!isset($data['module_id'])){
+            $module->code_index         = $maxIndex+1;//str_pad($maxIndex+1,3,"0",STR_PAD_LEFT);
+        }
         $module->code               = Center::where('id',$data['center_id'])->value('code');
         $module->name_index         = $name_index;
         $module->center_id          = $data['center_id'];
