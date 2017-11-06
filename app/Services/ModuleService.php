@@ -128,17 +128,17 @@ class ModuleService extends CoreService
         $module->code               = Center::where('id',$data['center_id'])->value('code');
         $module->name_index         = $name_index;
         $module->center_id          = $data['center_id'];
-        $module->service_time       = $data['service_time'];
-        $module->service_after_time = $data['service_after_time'];
-        $module->whether_medical    = $data['whether_medical'];
+        $module->service_time       = empty($data['service_time']) ? 0 : $data['service_time'];
+        $module->service_after_time = empty($data['service_after_time']) ? 0 : $data['service_after_time'];
+        $module->whether_medical    = empty($data['whether_medical']) ? 0 : $data['whether_medical'];
         $module->min_age_limit      = $data['min_age_limit'];
         $module->max_age_limit      = $data['max_age_limit'];
         $module->gender_limit       = $data['gender_limit'];
 //        $module->considerations     = $data['considerations'];//TODO
 //        $module->adverse_reaction   = $data['adverse_reaction'];//TODO
-        $module->description        = $data['description'];
-        $module->expected_cost      = $data['expected_cost'];
-        $module->remark             = $data['remark'];
+        $module->description        = $data['description'] ? $data['description'] : '';
+        $module->expected_cost      = $data['expected_cost'] ? $data['expected_cost'] : 0;
+        $module->remark             = $data['remark'] ? $data['remark'] : '';
 
         $save_module = $module->save();
 
@@ -187,6 +187,8 @@ class ModuleService extends CoreService
         }
 
         //模块设备表
+        $equipment_considerations = '';
+        $equipment_adverse_reaction = '';
         if(!empty($data['module_equipment'])){
             $equipment_list = collect($data['module_equipment'])->pluck('id')->all();
             $equipment_string = Equipment::whereIn('id',$equipment_list)->get(['considerations','adverse_reaction'])->toArray();
@@ -205,6 +207,8 @@ class ModuleService extends CoreService
         }
 
         //模块用品表
+        $supplies_considerations = '';
+        $supplies_adverse_reaction = '';
         if(!empty($data['module_supplies'])){
             $supplies_list = collect($data['module_supplies'])->pluck('id')->all();
             $supplies_string = Equipment::whereIn('id',$supplies_list)->get(['considerations','adverse_reaction'])->toArray();
@@ -342,7 +346,7 @@ class ModuleService extends CoreService
     public static function checkGenderAge($equipment_list,$supplies_list,$center_id)
     {
         if(empty($supplies_list) && empty($equipment_list)){
-            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => ''];
+            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => '' ,'clinics_list' => []];
         }
         $equipment_id_list = collect($equipment_list)->pluck('id')->all();
         $supplies_id_list  = collect($supplies_list)->pluck('id')->all();
@@ -373,7 +377,7 @@ class ModuleService extends CoreService
         }
 
         //返回诊室列表
-        $clinics_center_list = Clinics::where('center_id',$center_id)->get(['id','name'])->toArray();
+        $clinics_center_list = Clinics::where('center_id',$center_id)->get(['id','name','mark'])->toArray();
         $clinics_equipment_list = Equipment::whereIn('id',$equipment_id_list)->pluck('clinics_id')->toArray();
         foreach ($clinics_center_list as $key => $value){
             $clinics_center_list[$key]['status'] = 0;

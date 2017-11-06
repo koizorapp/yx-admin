@@ -113,7 +113,7 @@ class ProjectService extends CoreService
             }
         }
 
-        //模块设备表
+        //项目模块表  TODO 平行诊室
         if(!empty($data['project_module'])){
             foreach ($data['project_module'] as $key => $value){
                 $project_module_data = [
