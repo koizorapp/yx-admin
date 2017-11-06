@@ -180,8 +180,8 @@ class EquipmentService extends CoreService
         $equipment->market_price          = empty($data['market_price']) ? '' : $data['market_price'];
         $equipment->once_cost             = empty($data['once_cost']) ? '' : $data['once_cost'];
         $equipment->clinics_id            = empty($data['clinics_id']) ? 0 : $data['clinics_id'];
-        $equipment->min_age_limit         = $data['min_age_limit'];
-        $equipment->max_age_limit         = $data['max_age_limit'];
+        $equipment->min_age_limit         = empty($data['min_age_limit']) ? 0 : $data['min_age_limit'];
+        $equipment->max_age_limit         = empty($data['max_age_limit']) ? 151 : $data['max_age_limit'];
         $equipment->gender_limit          = $data['gender_limit'];
         $equipment->considerations        = empty($data['considerations']) ? '' : $data['considerations'];
         $equipment->adverse_reaction      = empty($data['adverse_reaction']) ? '' : $data['adverse_reaction'];

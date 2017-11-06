@@ -52,6 +52,10 @@ class ModuleService extends CoreService
         $module->module_function_labels          = isset($module_label[3]) ? $module_label[3] : [];
         $module->gender_limit_name               = self::$gender_data[$module->gender_limit];
 
+        //年龄限制处理
+        $module->age_limit = self::ageLimit($module->min_age_limit,$module->max_age_limit);
+
+
         //上一条
         $last_id = Module::where('id','<',$module->id)->max('id');
         $module->last_id = $last_id;
@@ -266,11 +270,7 @@ class ModuleService extends CoreService
         $max_age_limit = collect($limit)->pluck('max_age_limit')->all();
         $gender_limit = collect($limit)->pluck('gender_limit')->unique()->all();
 
-
-
         //TODO 处理性别限制
-
-
         $min_age = max($min_age_limit);
         $max_age = min($max_age_limit);
         $gender_sum = collect($gender_limit)->sum();
@@ -329,5 +329,18 @@ class ModuleService extends CoreService
         $job_grade_id_list = collect($job_grade_list)->pluck('id')->all();
         $list = Personnel::whereIn('job_grade_id',$job_grade_id_list)->get(['id','name'])->toArray();
         return $list;
+    }
+
+    public static function ageLimit($min_age,$max_age)
+    {
+        $age_limit = '不限';
+        if($min_age == 0 && $max_age < 151){
+            $age_limit = "≤$max_age";
+        }else if($min_age > 0 && $max_age < 151){
+            $age_limit = "$min_age 至 $max_age 岁";
+        }else if($min_age > 0 && $max_age == 151){
+            $age_limit = "≥$min_age";
+        }
+        return $age_limit;
     }
 }

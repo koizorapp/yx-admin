@@ -184,8 +184,8 @@ class SuppliesService extends CoreService
         $supplies->market_price          = empty($data['market_price']) ? '' : $data['market_price'];
         $supplies->once_cost             = empty($data['once_cost']) ? '' : $data['once_cost'];
         $supplies->unit                  = empty($data['unit']) ? '' : $data['unit'];
-        $supplies->min_age_limit         = $data['min_age_limit'];
-        $supplies->max_age_limit         = $data['max_age_limit'];
+        $supplies->min_age_limit         = empty($data['min_age_limit']) ? 0 : $data['min_age_limit'];
+        $supplies->max_age_limit         = empty($data['max_age_limit']) ? 151 : $data['max_age_limit'];
         $supplies->gender_limit          = $data['gender_limit'];
         $supplies->considerations        = empty($data['considerations']) ? '' : $data['considerations'];
         $supplies->adverse_reaction      = empty($data['adverse_reaction']) ? '' : $data['adverse_reaction'];
