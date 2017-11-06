@@ -266,6 +266,11 @@ class ModuleService extends CoreService
         $max_age_limit = collect($limit)->pluck('max_age_limit')->all();
         $gender_limit = collect($limit)->pluck('gender_limit')->unique()->all();
 
+
+
+        //TODO 处理性别限制
+
+
         $min_age = max($min_age_limit);
         $max_age = min($max_age_limit);
         $gender_sum = collect($gender_limit)->sum();
