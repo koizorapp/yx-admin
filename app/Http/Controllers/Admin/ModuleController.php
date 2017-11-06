@@ -125,7 +125,8 @@ class ModuleController extends Controller
     {
         $equipment_list = json_decode($request->get('equipment_list'),true);
         $supplies_list  = json_decode($request->get('supplies_list'),true);
-        $result = ModuleService::checkGenderAge($equipment_list,$supplies_list);
+        $center_id = $request->get('center_id');
+        $result = ModuleService::checkGenderAge($equipment_list,$supplies_list,$center_id);
         return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());;
 
     }

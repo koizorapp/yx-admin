@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Models\Center;
+use App\Models\Clinics;
 use App\Models\ClinicsGroup;
 use App\Models\Equipment;
 use App\Models\Label;
@@ -74,9 +75,7 @@ class ModuleService extends CoreService
         $module->module_equipment = self::getModuleEquipmentList([$module->id]);
         $module->module_supplies  = self::getModuleSuppliesList([$module->id]);
         $module->module_clinics   = self::getModuleClinicsList([$module->id]);
-        $module->whether_medical  = $module->whether_medical ? '是' : '否';
-
-
+        $module->whether_medical_name  = $module->whether_medical ? '是' : '否';
         $module_label = self::getModuleLabelList([$module->id]);
         $module->module_working_part_labels      = isset($module_label[4]) ? $module_label[4] : [];
         $module->module_contraindications_labels = isset($module_label[2]) ? $module_label[2] : [];
@@ -103,7 +102,7 @@ class ModuleService extends CoreService
 
     public static function addAndEditModule($data)
     {
-        $check_gender_age = self::checkGenderAge($data['module_equipment'],$data['module_supplies']);
+        $check_gender_age = self::checkGenderAge($data['module_equipment'],$data['module_supplies'],$data['center_id']);
         if($check_gender_age == false){
             return false;
         }
@@ -340,7 +339,7 @@ class ModuleService extends CoreService
         return $result;
     }
 
-    public static function checkGenderAge($equipment_list,$supplies_list)
+    public static function checkGenderAge($equipment_list,$supplies_list,$center_id)
     {
         if(empty($supplies_list) && empty($equipment_list)){
             return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => ''];
@@ -358,6 +357,7 @@ class ModuleService extends CoreService
         //TODO 处理性别限制
         $min_age = max($min_age_limit);
         $max_age = min($max_age_limit);
+
         $gender_sum = collect($gender_limit)->sum();
         $gender = $gender_sum; //TODO 性别限制的值不能修改
         if($gender_sum == 3){
@@ -367,7 +367,23 @@ class ModuleService extends CoreService
         if($min_age > $max_age){
             return self::currentReturnFalse([],'年龄限制冲突,请修改设备或者用品的组合.');
         }
-        return ['gender' => $gender ,'min_age_limit' => $min_age ,'max_age_limit' => $max_age];
+
+        if($max_age == 151){
+            $max_age = '';
+        }
+
+        //返回诊室列表
+        $clinics_center_list = Clinics::where('center_id',$center_id)->get(['id','name'])->toArray();
+        $clinics_equipment_list = Equipment::whereIn('id',$equipment_id_list)->pluck('clinics_id')->toArray();
+        foreach ($clinics_center_list as $key => $value){
+            $clinics_center_list[$key]['status'] = 0;
+            if(in_array($value['id'],$clinics_equipment_list)){
+                $clinics_center_list[$key]['status'] = 1;
+            }
+        }
+
+
+        return ['gender' => $gender ,'min_age_limit' => $min_age ,'max_age_limit' => $max_age ,'clinics_list' => $clinics_center_list];
     }
 
     public static function getModuleJobGradesList($module_id_list)
