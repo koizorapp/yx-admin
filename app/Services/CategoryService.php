@@ -19,7 +19,7 @@ class CategoryService
         $center_list = Center::get(['id','name'])->toArray();
 
         foreach ($center_list as $key => $value){
-            $center_list[$key]['list'] = $clinics_list = Category::where('center_id',$value['id'])->get(['id','name'])->toArray();
+            $center_list[$key]['list'] = $clinics_list = Category::where('center_id',$value['id'])->get(['id','name','code'])->toArray();
         }
         return $center_list;
     }
