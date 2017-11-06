@@ -36,9 +36,9 @@ class EquipmentService extends CoreService
             $result['data'][$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
             $result['data'][$key]['clinics_name'] = Clinics::where('id',$value['clinics_id'])->value('name');
             $result['data'][$key]['name'] = $result['data'][$key]['name_index'] == 0 ? $result['data'][$key]['name'] : $result['data'][$key]['name'] . '_' . $result['data'][$key]['name_index'];
-            unset($result['data']['center_id']);
-            unset($result['data']['clinics_id']);
-            unset($result['data']['name_index']);
+            unset($result['data'][$key]['center_id']);
+            unset($result['data'][$key]['clinics_id']);
+            unset($result['data'][$key]['name_index']);
         }
 
         $data['list'] = $result['data'];

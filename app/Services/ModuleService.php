@@ -12,6 +12,7 @@ namespace App\Services;
 use App\Models\Center;
 use App\Models\ClinicsGroup;
 use App\Models\Equipment;
+use App\Models\Label;
 use App\Models\Module;
 use App\Models\ModuleClinics;
 use App\Models\ModuleEquipment;
@@ -24,9 +25,40 @@ use Illuminate\Support\Facades\DB;
 
 class ModuleService extends CoreService
 {
-    public static function getModuleList()
+    public static function getModuleList($current_page)
     {
+        $columns = [
+            'id',
+            'code',
+            'code_index',
+            'name',
+            'name_index',
+            'center_id',
+            'service_time',
+            'service_after_time'
 
+        ];
+        $result = Module::paginate(self::$limit,$columns,'page',$current_page)->toArray();
+
+        foreach ($result['data'] as $key => $value)
+        {
+            $result['data'][$key]['job_grade_list'] = collect(JobGradeService::getJobGradeByModuleId($value['id']))->pluck('name')->implode(',','name');
+            $result['data'][$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+            $result['data'][$key]['name'] = $result['data'][$key]['name_index'] == 0 ? $result['data'][$key]['name'] : $result['data'][$key]['name'] . '_' . $result['data'][$key]['name_index'];
+            $result['data'][$key]['code'] = $result['data'][$key]['code'] . '_' . $result['data'][$key]['code_index'];
+            $result['data'][$key]['time'] = $result['data'][$key]['service_after_time'] ?  $result['data'][$key]['service_time'] . '+' . $result['data'][$key]['service_after_time'] . '分钟' : $result['data'][$key]['service_time'] . '分钟';
+            unset($result['data'][$key]['center_id']);
+            unset($result['data'][$key]['name_index']);
+            unset($result['data'][$key]['code_index']);
+            unset($result['data'][$key]['service_time']);
+            unset($result['data'][$key]['service_after_time']);
+        }
+
+        $data['list'] = $result['data'];
+        $data['total_page'] = $result['last_page'];
+        $data['total_count'] = $result['total'];
+        $data['current_page'] = $result['current_page'];
+        return $data;
     }
 
     public static function getDetail($module_id)
@@ -245,14 +277,67 @@ class ModuleService extends CoreService
         return true;
     }
 
-    public static function delModule()
+    public static function delModule($module_id)
     {
-
+        Module::where('id',$module_id)->delete();
+        ModuleLabel::where('module_id',$module_id)->delete();
+        ModuleEquipment::where('module_id',$module_id)->delete();
+        ModuleSupplies::where('module_id',$module_id)->delete();
+        ModuleClinics::where('module_id',$module_id)->delete();
+        ModuleJobGrade::where('module_id',$module_id)->delete();
+        return true;
     }
 
-    public static function getModuleListForSearch()
+    public static function getModuleListForSearch($center_id,$label_category_id,$label_key_word)
     {
+        $label = [];
+        if($label_key_word){
+            $label = Label::where('name','like','%'.$label_key_word.'%')->pluck('id')->toArray();
+        }
 
+        $module_id_list = new ModuleLabel();
+        if($center_id){
+            $module_id_list = $module_id_list->where('center_id',$center_id);
+        }
+        if($label_category_id){
+            $module_id_list = $module_id_list->where('label_category_id',$label_category_id);
+        }
+        if($label){
+            $module_id_list = $module_id_list->whereIn('label_id',$label);
+        }
+        $module_id_list = $module_id_list->groupBy('module_id')->pluck('module_id')->toArray();
+
+        if(empty($module_id_list)){
+            return [];
+        }
+
+        $columns = [
+            'id',
+            'code',
+            'code_index',
+            'name',
+            'name_index',
+            'center_id',
+            'service_time',
+            'service_after_time'
+        ];
+        $result = Module::whereIn('id',$module_id_list)->get($columns)->toArray();
+
+        foreach ($result as $key => $value)
+        {
+            $result[$key]['job_grade_list'] = collect(JobGradeService::getJobGradeByModuleId($value['id']))->pluck('name')->implode(',','name');
+            $result[$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+            $result[$key]['name'] = $result[$key]['name_index'] == 0 ? $result[$key]['name'] : $result[$key]['name'] . '_' . $result[$key]['name_index'];
+            $result[$key]['code'] = $result[$key]['code'] . '_' . $result[$key]['code_index'];
+            $result[$key]['time'] = $result[$key]['service_after_time'] ?  $result[$key]['service_time'] . '+' . $result[$key]['service_after_time'] . '分钟' : $result[$key]['service_time'] . '分钟';
+            unset($result[$key]['center_id']);
+            unset($result[$key]['name_index']);
+            unset($result[$key]['code_index']);
+            unset($result[$key]['service_time']);
+            unset($result[$key]['service_after_time']);
+        }
+
+        return $result;
     }
 
     public static function checkGenderAge($equipment_list,$supplies_list)

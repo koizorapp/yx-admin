@@ -14,7 +14,9 @@ class ModuleController extends Controller
      */
     protected function getModuleList(Request $request)
     {
-
+        $current_page = $request->get('current_page');
+        $list = ModuleService::getModuleList($current_page);
+        return $this->json($list);
     }
 
     /*
@@ -89,7 +91,9 @@ class ModuleController extends Controller
      */
     protected function delModule(Request $request)
     {
-
+        $module_id = $request->get('module_id');
+        $result = ModuleService::delModule($module_id);
+        return $result ? $this->json() : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
     }
 
     /*
@@ -97,7 +101,11 @@ class ModuleController extends Controller
      */
     protected function getModuleListForSearch(Request $request)
     {
-
+        $center_id = $request->get('center_id');
+        $label_category_id = $request->get('label_category_id');
+        $label_key_word = $request->get('label_key_word');
+        $result = ModuleService::getModuleListForSearch($center_id,$label_category_id,$label_key_word);
+        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
     }
 
     /*
@@ -121,18 +129,4 @@ class ModuleController extends Controller
         return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());;
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
