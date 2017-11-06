@@ -176,9 +176,9 @@ class EquipmentService extends CoreService
         $equipment->brands                = empty($data['brands']) ? '' : $data['brands'];
         $equipment->production_area       = empty($data['production_area']) ? '' : $data['production_area'];
         $equipment->specifications        = empty($data['specifications']) ? '' : $data['specifications'];
-        $equipment->purchase_price        = empty($data['purchase_price']) ? '' : $data['purchase_price'];
-        $equipment->market_price          = empty($data['market_price']) ? '' : $data['market_price'];
-        $equipment->once_cost             = empty($data['once_cost']) ? '' : $data['once_cost'];
+        $equipment->purchase_price        = empty($data['purchase_price']) ? 0.00 : $data['purchase_price'];
+        $equipment->market_price          = empty($data['market_price']) ? 0.00 : $data['market_price'];
+        $equipment->once_cost             = empty($data['once_cost']) ? 0.00 : $data['once_cost'];
         $equipment->clinics_id            = empty($data['clinics_id']) ? 0 : $data['clinics_id'];
         $equipment->min_age_limit         = empty($data['min_age_limit']) ? 0 : $data['min_age_limit'];
         $equipment->max_age_limit         = empty($data['max_age_limit']) ? 151 : $data['max_age_limit'];

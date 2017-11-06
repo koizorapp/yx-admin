@@ -22,13 +22,11 @@ class LabelService
 
     public static function getLabelList()
     {
-        $labelList = Label::get()->toArray();
-        $data = collect($labelList)->groupBy('label_category_id')->toArray();
         $list = [];
-        foreach ($data as $key => $value){
+        foreach (self::$labelCategory as $key => $value){
             $list[$key]['id'] = $key;
-            $list[$key]['name'] = self::$labelCategory[$key];
-            $list[$key]['list'] = $value;
+            $list[$key]['name'] = $value;
+            $list[$key]['list'] = $labelList = Label::where('label_category_id',$key)->get(['id','name'])->toArray();
         }
         $list = array_values($list);
         return $list;

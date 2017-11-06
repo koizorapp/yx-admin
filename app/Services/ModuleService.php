@@ -80,7 +80,7 @@ class ModuleService extends CoreService
         $module_label = self::getModuleLabelList([$module->id]);
         $module->module_working_part_labels      = isset($module_label[4]) ? $module_label[4] : [];
         $module->module_contraindications_labels = isset($module_label[2]) ? $module_label[2] : [];
-        $module->equipment_indications_labels    = isset($module_label[1]) ? $module_label[1] : [];
+        $module->module_indications_labels    = isset($module_label[1]) ? $module_label[1] : [];
         $module->module_function_labels          = isset($module_label[3]) ? $module_label[3] : [];
         $module->gender_limit_name               = self::$gender_data[$module->gender_limit];
 
@@ -171,7 +171,7 @@ class ModuleService extends CoreService
         }
 
         //模块标签表
-        $mergeLabels = array_merge($data['contraindications'],$data['working_part']);
+        $mergeLabels = array_merge($data['contraindications'],$data['function']);
         if(!empty($mergeLabels)){
             foreach ($mergeLabels as $key => $value){
                 $module_label_data = [

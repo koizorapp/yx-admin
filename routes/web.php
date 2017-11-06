@@ -81,6 +81,17 @@ Route::get('job-grade/list','ModuleController@getJobGrade');
 Route::get('module/check_gender_age','ModuleController@checkGenderAge');
 
 
+//模块
+Route::get('project/list','ProjectController@getProjectList');
+Route::get('project/detail','ProjectController@getDetail');
+Route::post('project/add','ProjectController@addProject');
+Route::post('project/edit','ProjectController@editProject');
+Route::get('project/del','ProjectController@delProject');
+Route::get('project/search','ProjectController@getProjectListForSearch');
+//Route::get('job-grade/list','ProjectController@getJobGrade');//TODO
+Route::get('project/check_gender_age','ProjectController@checkGenderAge');
+
+
 
 
 
