@@ -78,7 +78,7 @@ Route::post('module/edit','ModuleController@editModule');
 Route::get('module/del','ModuleController@delModule');
 Route::get('module/search','ModuleController@getModuleListForSearch');
 Route::get('job-grade/list','ModuleController@getJobGrade');
-Route::get('module/check_gender_age','ModuleController@checkGenderAge');
+Route::get('module/check_gender_age','ModuleController@checkGenderAge');//TODO 修改路由 驼峰
 
 
 //模块
@@ -90,6 +90,7 @@ Route::get('project/del','ProjectController@delProject');
 Route::get('project/search','ProjectController@getProjectListForSearch');
 //Route::get('job-grade/list','ProjectController@getJobGrade');//TODO
 Route::get('project/check_gender_age','ProjectController@checkGenderAge');
+Route::get('project/getModuleDataForProject','ProjectController@getModuleDataForProject');
 
 
 

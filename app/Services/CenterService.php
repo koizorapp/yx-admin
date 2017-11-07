@@ -12,6 +12,7 @@ class CenterService
     public static function getCenterList()
     {
         $list = Center::get()->toArray();
+        array_unshift($list,['id'=>0,'name'=>'请选择','code'=>'']);
         return $list;
     }
 

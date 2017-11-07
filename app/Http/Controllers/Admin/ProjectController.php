@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\CoreService;
+use App\Services\ModuleService;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -82,6 +83,15 @@ class ProjectController extends Controller
     }
 
     /*
-     *
+     * 验证模块
      */
+    protected function getModuleDataForProject(Request $request)
+    {
+        CoreService::validate($request,[
+            'module_list' => 'required | json'
+        ]);
+        $module_list = json_decode($request->get('module_list'),true);
+        $result = ProjectService::getModuleDataForProject($module_list);
+        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
+    }
 }

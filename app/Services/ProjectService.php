@@ -133,6 +133,9 @@ class ProjectService extends CoreService
 
     public static function getModuleDataForProject($module_list)
     {
-        
+
+        $module_id_list = collect($module_list)->pluck('list')->collapse()->pluck('id')->all();
+        $module_list = ModuleService::getModuleDetailForProject($module_id_list);
+        return $module_list;
     }
 }

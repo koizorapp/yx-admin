@@ -29,6 +29,7 @@ class EquipmentService extends CoreService
             'center_id',
             'clinics_id'
         ];
+
         $result = Equipment::paginate(self::$limit,$columns,'page',$current_page)->toArray();
 
         foreach ($result['data'] as $key => $value)

@@ -391,13 +391,13 @@ class ModuleService extends CoreService
 
     public static function getModuleJobGradesList($module_id_list)
     {
-        $list = ModuleJobGrade::leftJoin('job_grade','job_grade.id','=','module_job_grades.job_grade_id')->whereIn('module_id',$module_id_list)->select(DB::raw('yx_job_grade.id,yx_job_grade.name'))->get()->toArray();
+        $list = ModuleJobGrade::leftJoin('job_grade','job_grade.id','=','module_job_grades.job_grade_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_job_grade.id'))->select(DB::raw('yx_job_grade.id,yx_job_grade.name'))->get()->toArray();
         return $list;
     }
 
     public static function getModuleEquipmentList($module_id_list)
     {
-        $list = ModuleEquipment::leftJoin('equipments','equipments.id','=','module_equipments.equipment_id')->whereIn('module_id',$module_id_list)->select(DB::raw('yx_equipments.id,yx_equipments.name,yx_equipments.name_index'))->get()->toArray();
+        $list = ModuleEquipment::leftJoin('equipments','equipments.id','=','module_equipments.equipment_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_equipments.id'))->select(DB::raw('yx_equipments.id,yx_equipments.name,yx_equipments.name_index'))->get()->toArray();
         foreach ($list as $key => $value){
             $list[$key]['name'] = $value['name_index'] == 0 ? $value['name'] : $value['name'] . '_' . $value['name_index'];
             unset($list[$key]['name_index']);
@@ -407,7 +407,7 @@ class ModuleService extends CoreService
 
     public static function getModuleSuppliesList($module_id_list)
     {
-        $list = ModuleSupplies::leftJoin('supplies','supplies.id','=','module_supplies.supplies_id')->whereIn('module_id',$module_id_list)->select(DB::raw('yx_supplies.id,yx_supplies.name,yx_supplies.name_index'))->get()->toArray();
+        $list = ModuleSupplies::leftJoin('supplies','supplies.id','=','module_supplies.supplies_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_supplies.id'))->select(DB::raw('yx_supplies.id,yx_supplies.name,yx_supplies.name_index'))->get()->toArray();
         foreach ($list as $key => $value){
             $list[$key]['name'] = $value['name_index'] == 0 ? $value['name'] : $value['name'] . '_' . $value['name_index'];
             unset($list[$key]['name_index']);
@@ -417,7 +417,7 @@ class ModuleService extends CoreService
 
     public static function getModuleClinicsList($module_id_list)
     {
-        $list = ModuleClinics::leftJoin('clinics','clinics.id','=','module_clinics.clinics_id')->whereIn('module_id',$module_id_list)->select(DB::raw('yx_clinics.id,yx_clinics.name'))->get()->toArray();
+        $list = ModuleClinics::leftJoin('clinics','clinics.id','=','module_clinics.clinics_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_clinics.id'))->select(DB::raw('yx_clinics.id,yx_clinics.name'))->get()->toArray();
         return $list;
     }
 
@@ -446,5 +446,41 @@ class ModuleService extends CoreService
             $age_limit = "≥$min_age";
         }
         return $age_limit;
+    }
+
+    public static function getModuleDetailForProject($module_id_list)
+    {
+        $data = [];
+        $module          = Module::whereIn('id',$module_id_list)->get(['whether_medical','min_age_limit','max_age_limit','gender_limit','expected_cost'])->toArray();
+        $whether_medical = collect($module)->pluck('whether_medical')->all();
+        $min_age_limit   = collect($module)->pluck('min_age_limit')->all();
+        $max_age_limit   = collect($module)->pluck('max_age_limit')->all();
+        $gender_limit    = collect($module)->pluck('gender_limit')->unique()->all();
+        $min_age         = max($min_age_limit);
+        $max_age         = min($max_age_limit);
+
+        $gender_sum = collect($gender_limit)->sum();
+        if($gender_sum == 3){
+            return self::currentReturnFalse([],'性别限制冲突,请修改模块的组合.');
+        }
+
+        if($min_age > $max_age){
+            return self::currentReturnFalse([],'年龄限制冲突,请修改模块的组合.');
+        }
+
+        $data['job_grades']                      = self::getModuleJobGradesList($module_id_list);
+        $data['module_equipment']                = self::getModuleEquipmentList($module_id_list);
+        $data['module_supplies']                 = self::getModuleSuppliesList($module_id_list);
+        $data['module_clinics']                  = self::getModuleClinicsList($module_id_list);
+        $data['whether_medical_name']            = in_array(1,$whether_medical) ? '是' : '否';
+        $module_label                            = self::getModuleLabelList($module_id_list);
+        $data['module_working_part_labels']      = isset($module_label[4]) ? $module_label[4] : [];
+        $data['module_contraindications_labels'] = isset($module_label[2]) ? $module_label[2] : [];
+        $data['module_indications_labels']       = isset($module_label[1]) ? $module_label[1] : [];
+        $data['module_function_labels']          = isset($module_label[3]) ? $module_label[3] : [];
+        $data['gender_limit_name']               = self::$gender_data[$gender_sum];
+        $data['age_limit']                       = self::ageLimit($min_age,$max_age);
+        $data['expected_cost']                   = collect($module)->sum('expected_cost');
+        return $data;
     }
 }
