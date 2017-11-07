@@ -192,8 +192,8 @@ class ModuleService extends CoreService
         if(!empty($data['module_equipment'])){
             $equipment_list = collect($data['module_equipment'])->pluck('id')->all();
             $equipment_string = Equipment::whereIn('id',$equipment_list)->get(['considerations','adverse_reaction'])->toArray();
-            $equipment_considerations = collect($equipment_string)->implode(',','considerations');
-            $equipment_adverse_reaction = collect($equipment_string)->implode(',','adverse_reaction');
+            $equipment_considerations = collect($equipment_string)->pluck('considerations')->implode(',','considerations');
+            $equipment_adverse_reaction = collect($equipment_string)->pluck('adverse_reaction')->implode(',','adverse_reaction');
             foreach ($data['module_equipment'] as $key => $value){
                 $module_equipment_data = [
                     'equipment_id' => $value['id'],
@@ -212,8 +212,8 @@ class ModuleService extends CoreService
         if(!empty($data['module_supplies'])){
             $supplies_list = collect($data['module_supplies'])->pluck('id')->all();
             $supplies_string = Equipment::whereIn('id',$supplies_list)->get(['considerations','adverse_reaction'])->toArray();
-            $supplies_considerations = collect($supplies_string)->implode(',','considerations');
-            $supplies_adverse_reaction = collect($supplies_string)->implode(',','adverse_reaction');
+            $supplies_considerations = collect($supplies_string)->pluck('considerations')->implode(',','considerations');
+            $supplies_adverse_reaction = collect($supplies_string)->pluck('adverse_reaction')->implode(',','adverse_reaction');
             foreach ($data['module_supplies'] as $key => $value){
                 $module_supplies_data = [
                     'supplies_id'  => $value['id'],
@@ -275,7 +275,6 @@ class ModuleService extends CoreService
             }
 
         }
-
         DB::commit();
         return true;
     }
