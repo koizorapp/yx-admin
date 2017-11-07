@@ -148,7 +148,6 @@ class EquipmentService extends CoreService
         $check_code = Equipment::where('code',$data['code'])->exists();
         if($check_code && !isset($data['equipment_id'])){
             return self::currentReturnFalse([],'设备代码重复,请核实.');
-//            return false;//该设备编号已经存在 请核实  或者是前端输入完成ajax校验
         }
 
         //设备名字重复自动加一

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use App\Services\ProjectService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -29,10 +30,16 @@ class ProjectController extends Controller
      */
     protected function addProject(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'center_id' => 'required | numeric | min:1',
+            'category_id' => 'required | numeric | min:1',
+            'project_module' => 'required | json'
+        ]);
         $data['name']             = $request->get('name');
         $data['center_id']        = $request->get('center_id');
         $data['category_id']      = $request->get('category_id');
-        $data['project_module']   = json_decode($request->get('project_module','[]'),true);
+        $data['project_module']   = json_decode($request->get('project_module'),true);
         $data['description']      = $request->get('description');
         $data['time']             = $request->get('time');
         $data['min_age_limit']    = $request->get('min_age_limit');

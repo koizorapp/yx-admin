@@ -82,7 +82,14 @@ return [
 
     'attributes'           => [
         'center_id' => 'center_id',
-        'category_id' => 'category_id'
+        'category_id' => 'category_id',
+        'current_page' => 'current_page',
+        'label_category_id' => 'label_category_id',
+        'equipment_id' => 'equipment_id',
+        'min_age_limit' => 'min_age_limit',
+        'max_age_limit' => 'max_age_limit',
+        'gender_limit'=> 'gender_limit',
+        'project_module' => 'project_module'
 
     ]
 ];

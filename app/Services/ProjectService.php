@@ -48,13 +48,13 @@ class ProjectService extends CoreService
         $project->code             = Center::where('id',$data['center_id'])->value('code') . '_' .Category::where('id',$data['category_id'])->value('code');
         $project->center_id        = $data['center_id'];
         $project->category_id      = $data['category_id'];
-        $project->time             = $data['time'];
-        $project->market_price     = $data['market_price'];
-        $project->member_price     = $data['member_price'];
-        $project->considerations   = $data['considerations'];
-        $project->description      = $data['description'];
-        $project->adverse_reaction = $data['adverse_reaction'];
-        $project->remark           = $data['remark'];
+        $project->time             = $data['time'] ? $data['time'] : 0 ;
+        $project->market_price     = $data['market_price'] ? $data['market_price'] : 0.00;
+        $project->member_price     = $data['member_price'] ? $data['member_price'] : 0.00;
+        $project->considerations   = $data['considerations'] ? $data['considerations'] : '';
+        $project->description      = $data['description'] ? $data['description'] : '';
+        $project->adverse_reaction = $data['adverse_reaction'] ? $data['adverse_reaction'] : '';
+        $project->remark           = $data['remark'] ? $data['remark'] : '';
 
         $save_project = $project->save();
 
@@ -129,5 +129,10 @@ class ProjectService extends CoreService
 
         DB::commit();
         return true;
+    }
+
+    public static function getModuleDataForProject($module_list)
+    {
+        
     }
 }

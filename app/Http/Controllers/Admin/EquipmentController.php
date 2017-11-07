@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use App\Services\EquipmentService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,8 +14,11 @@ class EquipmentController extends Controller
      */
     protected function getEquipmentList(Request $request)
     {
+        CoreService::validate($request,[
+            'current_page' => 'required | numeric | min:1'
+        ]);
         $current_page = $request->get('current_page');
-        $list = EquipmentService::getEquipmentList($current_page);
+        $list         = EquipmentService::getEquipmentList($current_page);
         return $this->json($list);
     }
 
@@ -23,8 +27,11 @@ class EquipmentController extends Controller
      */
     protected function getEquipmentListByCenterId(Request $request)
     {
+        CoreService::validate($request,[
+            'center_id' => 'required | numeric | min:1'
+        ]);
         $center_id = $request->get('center_id');
-        $list = EquipmentService::getEquipmentListByCenterId($center_id);
+        $list      = EquipmentService::getEquipmentListByCenterId($center_id);
         return $this->json($list);
     }
 
@@ -33,12 +40,17 @@ class EquipmentController extends Controller
      */
     protected function getEquipmentListForSearch(Request $request)
     {
-        $center_id = $request->get('center_id');
+        CoreService::validate($request,[
+            'center_id'         => 'required | numeric',
+            'label_category_id' => 'required | numeric',
+        ]);
+
+        $center_id         = $request->get('center_id');
         $label_category_id = $request->get('label_category_id');
-        $label_key_word = $request->get('label_key_word');
-//        $current_page = $request->get('current_page');
-        $result = EquipmentService::getEquipmentListForSearch($center_id,$label_category_id,$label_key_word);
-        return $result ? $this->json($result) : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
+        $label_key_word    = $request->get('label_key_word');
+        $result            = EquipmentService::getEquipmentListForSearch($center_id,$label_category_id,$label_key_word);
+//        return $result ? $this->json($result) : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
+        return $this->json($result);
     }
 
     /*
@@ -46,8 +58,11 @@ class EquipmentController extends Controller
      */
     protected function getDetail(Request $request)
     {
+        CoreService::validate($request,[
+            'equipment_id' => 'required | numeric | min:1',
+        ]);
         $equipment_id = $request->get('equipment_id');
-        $result = EquipmentService::getDetail($equipment_id);
+        $result       = EquipmentService::getDetail($equipment_id);
         return $result ? $this->json($result) : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
     }
 
@@ -56,11 +71,18 @@ class EquipmentController extends Controller
      */
     protected function addEquipment(Request $request)
     {
-        $data['code']                  = $request->get('code');//TODO 重复录入校验 //TODO 必填
-        $data['name']                  = $request->get('name');//TODO 已经存在 自动加一 //TODO 必填
+        CoreService::validate($request,[
+            'name'          => 'required',
+            'center_id'     => 'required | numeric | min:1',
+//            'min_age_limit' => 'required | numeric',
+//            'max_age_limit' => 'required | numeric',
+            'gender_limit'  => 'required | in:0,1,2'
+        ]);
+        $data['code']                  = $request->get('code');
+        $data['name']                  = $request->get('name');
         $data['english_name']          = $request->get('english_name','');
         $data['storage_name']          = $request->get('storage_name','');
-        $data['center_id']             = $request->get('center_id');//TODO 必填
+        $data['center_id']             = $request->get('center_id');
         $data['brands']                = $request->get('brands','');
         $data['production_area']       = $request->get('production_area','');
         $data['specifications']        = $request->get('specifications','');
@@ -68,9 +90,9 @@ class EquipmentController extends Controller
         $data['market_price']          = $request->get('market_price','');
         $data['once_cost']             = $request->get('once_cost','');
         $data['clinics_id']            = $request->get('clinics_id','');
-        $data['min_age_limit']         = $request->get('min_age_limit');//TODO 必填
-        $data['max_age_limit']         = $request->get('max_age_limit');//TODO 必填
-        $data['gender_limit']          = $request->get('gender_limit');//TODO 必填
+        $data['min_age_limit']         = $request->get('min_age_limit');
+        $data['max_age_limit']         = $request->get('max_age_limit');
+        $data['gender_limit']          = $request->get('gender_limit');
         $data['considerations']        = $request->get('considerations','');
         $data['adverse_reaction']      = $request->get('adverse_reaction','');
         $data['description']           = $request->get('description','');
@@ -88,12 +110,19 @@ class EquipmentController extends Controller
      */
     protected function editEquipment(Request $request)
     {
+        CoreService::validate($request,[
+            'name'          => 'required',
+            'center_id'     => 'required | numeric | min:1',
+//            'min_age_limit' => 'required | numeric',
+//            'max_age_limit' => 'required | numeric',
+            'gender_limit'  => 'required | in:0,1,2'
+        ]);
         $data['equipment_id']          = $request->get('equipment_id');
-        $data['code']                  = $request->get('code');//TODO 重复录入校验 //TODO 必填
-        $data['name']                  = $request->get('name');//TODO 已经存在 自动加一 //TODO 必填
+        $data['code']                  = $request->get('code');
+        $data['name']                  = $request->get('name');
         $data['english_name']          = $request->get('english_name','');
         $data['storage_name']          = $request->get('storage_name','');
-        $data['center_id']             = $request->get('center_id');//TODO 必填
+        $data['center_id']             = $request->get('center_id');
         $data['brands']                = $request->get('brands','');
         $data['production_area']       = $request->get('production_area','');
         $data['specifications']        = $request->get('specifications','');
@@ -101,9 +130,9 @@ class EquipmentController extends Controller
         $data['market_price']          = $request->get('market_price','');
         $data['once_cost']             = $request->get('once_cost','');
         $data['clinics_id']            = $request->get('clinics_id','');
-        $data['min_age_limit']         = $request->get('min_age_limit');//TODO 必填
-        $data['max_age_limit']         = $request->get('max_age_limit');//TODO 必填
-        $data['gender_limit']          = $request->get('gender_limit');//TODO 必填
+        $data['min_age_limit']         = $request->get('min_age_limit');
+        $data['max_age_limit']         = $request->get('max_age_limit');
+        $data['gender_limit']          = $request->get('gender_limit');
         $data['considerations']        = $request->get('considerations','');
         $data['adverse_reaction']      = $request->get('adverse_reaction','');
         $data['description']           = $request->get('description','');
@@ -121,6 +150,9 @@ class EquipmentController extends Controller
      */
     protected function delEquipment(Request $request)
     {
+        CoreService::validate($request,[
+            'equipment_id'  => 'required | numeric | min:1'
+        ]);
         $equipment_id = $request->get('equipment_id');
         $result = EquipmentService::delEquipment($equipment_id);
         return $result ? $this->json() : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
