@@ -15,7 +15,12 @@ class ProjectController extends Controller
      */
     protected function getProjectList(Request $request)
     {
-
+        CoreService::validate($request,[
+            'current_page' => 'required | numeric | min:1'
+        ]);
+        $current_page = $request->get('current_page');
+        $list         = ProjectService::getProjectList($current_page);
+        return $this->json($list);
     }
 
     /*
@@ -95,7 +100,9 @@ class ProjectController extends Controller
      */
     protected function delProject(Request $request)
     {
-
+        $project_id = $request->get('project_id');
+        $result = ProjectService::delProject($project_id);
+        return $result ? $this->json() : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
     }
 
     /*
@@ -103,7 +110,11 @@ class ProjectController extends Controller
      */
     protected function getProjectListForSearch(Request $request)
     {
-
+        $center_id = $request->get('center_id');
+        $label_category_id = $request->get('label_category_id');
+        $label_key_word = $request->get('label_key_word');
+        $result = ProjectService::getProjectListForSearch($center_id,$label_category_id,$label_key_word);
+        return $result ? $this->json($result) : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
     }
 
     /*

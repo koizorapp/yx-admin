@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Center;
+use App\Models\Label;
 use App\Models\Module;
 use App\Models\ModuleLabel;
 use App\Models\Project;
@@ -20,6 +21,37 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectService extends CoreService
 {
+    public static function getProjectList($current_page)
+    {
+        $columns = [
+            'id',
+            'code',
+            'code_index',
+            'name',
+            'center_id',
+            'category_id',
+            'time'
+        ];
+
+        $result = Project::paginate(self::$limit,$columns,'page',$current_page)->toArray();
+
+        foreach ($result['data'] as $key => $value)
+        {
+            $result['data'][$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+            $result['data'][$key]['category_name'] = Category::where('id',$value['category_id'])->value('name');
+            $result['data'][$key]['code'] = $result['data'][$key]['code_index'] == 0 ? $result['data'][$key]['code'] : $result['data'][$key]['code'] . '_' . $result['data'][$key]['code_index'];
+            unset($result['data'][$key]['center_id']);
+            unset($result['data'][$key]['category_id']);
+            unset($result['data'][$key]['code_index']);
+        }
+
+        $data['list'] = $result['data'];
+        $data['total_page'] = $result['last_page'];
+        $data['total_count'] = $result['total'];
+        $data['current_page'] = $result['current_page'];
+        return $data;
+    }
+
     public static function getDetail($project_id)
     {
         $project = Project::find($project_id);
@@ -203,10 +235,65 @@ class ProjectService extends CoreService
         return true;
     }
 
+    public static function delProject($project_id)
+    {
+        Project::where('id',$project_id)->delete();
+        ProjectLabel::where('project_id',$project_id)->delete();
+        ProjectModule::where('project_id',$project_id)->delete();
+        return true;
+    }
+
     public static function getModuleDataForProject($module_list)
     {
         $module_id_list = collect($module_list)->collapse()->pluck('id')->all();
         $module_list = ModuleService::getModuleDetailForProject($module_id_list);
         return $module_list;
+    }
+
+    public static function getProjectListForSearch($center_id,$label_category_id,$label_key_word)
+    {
+        $label = [];
+        if($label_key_word){
+            $label = Label::where('name','like','%'.$label_key_word.'%')->pluck('id')->toArray();
+        }
+
+        $project_id_list = new ProjectLabel();
+        if($center_id){
+            $project_id_list = $project_id_list->where('center_id',$center_id);
+        }
+        if($label_category_id){
+            $project_id_list = $project_id_list->where('label_category_id',$label_category_id);
+        }
+        if($label){
+            $project_id_list = $project_id_list->whereIn('label_id',$label);
+        }
+        $project_id_list = $project_id_list->groupBy('project_id')->pluck('project_id')->toArray();
+
+        if(empty($project_id_list)){
+            return [];
+        }
+
+        $columns = [
+            'id',
+            'code',
+            'code_index',
+            'name',
+            'center_id',
+            'category_id',
+            'time'
+        ];
+        $result = Project::whereIn('id',$project_id_list)->get($columns)->toArray();
+
+        foreach ($result as $key => $value)
+        {
+            $result[$key]['center_name'] = Center::where('id',$value['center_id'])->value('name');
+            $result[$key]['category_name'] = Category::where('id',$value['category_id'])->value('name');
+            $result[$key]['code'] = $result[$key]['code_index'] == 0 ? $result[$key]['code'] : $result[$key]['code'] . '_' . $result[$key]['code_index'];
+            unset($result[$key]['center_id']);
+            unset($result[$key]['category_id']);
+            unset($result[$key]['code_index']);
+        }
+
+        return $result;
     }
 }
