@@ -41,4 +41,16 @@ class CoreService
         self::$data   = $data;
         return false;
     }
+
+    public static function validate($request, array $rules, $messages = [], $attributes = []){
+        if(is_object($request)){
+            $arr = $request->all();
+        }else{
+            $arr = $request;
+        }
+        $validator = \Validator::make($arr, $rules, $messages, $attributes);
+        if($validator->fails()) {
+            throw new \App\Exceptions\InvalidRequestException($validator->getMessageBag()->toArray());
+        }
+    }
 }

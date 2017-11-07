@@ -48,6 +48,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof InvalidRequestException){
+            if(count($exception->data) > 0){
+                $msg = array_shift($exception->data)[0];
+            }else{
+                $msg = '请求参数错误';
+            }
+            return \Response::json([
+                'status' => 5000,
+                'msg'    => $msg,
+                'data'   => $exception->data,
+            ]);
+        }
+
         return parent::render($request, $exception);
     }
 }

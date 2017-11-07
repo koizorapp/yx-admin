@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Services\CategoryService;
+use App\Services\CoreService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -22,8 +23,13 @@ class CategoryController extends Controller
      */
     protected function getCategoryListByCenterId(Request $request)
     {
+        CoreService::validate($request,
+            [
+                'center_id' => 'required | numeric | min:1'
+            ]
+        );
         $center_id = $request->get('center_id');
-        $result = CategoryService::getCategoryListByCenterId($center_id);
+        $result    = CategoryService::getCategoryListByCenterId($center_id);
         return $this->json($result);
     }
 
@@ -32,10 +38,15 @@ class CategoryController extends Controller
      */
     protected function addCategory(Request $request)
     {
+        CoreService::validate($request,[
+                'center_id' => 'required | numeric | min:1',
+                'name'      => 'required',
+                'code'      => 'required'  //TODO 自定义 只能是大写英文字母
+        ]);
         $center_id = $request->get('center_id');
-        $name = $request->get('name');
-        $code = $request->get('code');
-        $result = CategoryService::addCategory($center_id, $name, $code);
+        $name      = $request->get('name');
+        $code      = $request->get('code');
+        $result    = CategoryService::addCategory($center_id, $name, $code);
         return $result ? $this->json() : $this->json([], 'error', 5000);
     }
 
@@ -44,12 +55,18 @@ class CategoryController extends Controller
      */
     protected function editCategory(Request $request)
     {
+        CoreService::validate($request,[
+            'center_id'   => 'required | numeric | min:1',
+            'category_id' => 'required | numeric | min:1',
+            'name'        => 'required',
+            'code'        => 'required'
+        ]);
         $category_id = $request->get('category_id');
-        $center_id = $request->get('center_id');
-        $name = $request->get('name');
-        $code = $request->get('code');
-        $result = CategoryService::editCategory($category_id,$center_id, $name, $code);
-        return $result ? $this->json() : $this->json([], 'error', 5000);
+        $center_id   = $request->get('center_id');
+        $name        = $request->get('name');
+        $code        = $request->get('code');
+        $result      = CategoryService::editCategory($category_id,$center_id, $name, $code);
+        return $result ? $this->json() : $this->json(CategoryService::getLastData(),CategoryService::getLastMsg(),CategoryService::getLastStatus());
     }
 
     /*
@@ -57,8 +74,11 @@ class CategoryController extends Controller
      */
     protected function delCategory(Request $request)
     {
+        CoreService::validate($request,[
+            'category_id' => 'required | numeric | min:1'
+        ]);
         $category_id = $request->get('category_id');
-        $result = CategoryService::delCategory($category_id);
-        return $result ? $this->json() : $this->json([],'error',5000);
+        $result      = CategoryService::delCategory($category_id);
+        return $result ? $this->json() : $this->json([],'该数据不存在，删除失败',5000);
     }
 }

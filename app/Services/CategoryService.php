@@ -12,7 +12,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Models\Center;
 
-class CategoryService
+class CategoryService extends CoreService
 {
     public static function getCategoryList()
     {
@@ -32,16 +32,24 @@ class CategoryService
 
     public static function addCategory($center_id,$name,$code)
     {
-        $category = new Category();
-        $category->name = $name;
-        $category->code = $code;
-        $category->center_id = $center_id;
-        return $category->save();
+        $category = Category::firstOrCreate([
+            'name' => $name,
+            'code' => $code,
+            'center_id' => $center_id
+        ]);
+        return $category;
     }
 
     public static function editCategory($category_id,$center_id, $name, $code)
     {
+        $exists   = Category::where('center_id',$center_id)->where('name',$name)->where('code',$code)->exists();
+        if($exists){
+            return self::currentReturnFalse([],'该数据已经存在,请勿重复添加.');
+        }
         $category = Category::find($category_id);
+        if(!$category){
+            return self::currentReturnFalse([],'该类别不存在,请核实.');
+        }
         $category->name = $name;
         $category->code = $code;
         $category->center_id = $center_id;
