@@ -12,6 +12,6 @@ class ProjectModule extends Model
     protected $table = 'project_modules';
 
     protected $fillable = [
-        'project_id','module_id'
+        'project_id','module_id','sort'
     ];
 }

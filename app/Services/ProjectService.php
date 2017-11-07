@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Center;
+use App\Models\Module;
 use App\Models\ModuleLabel;
 use App\Models\Project;
 use App\Models\ProjectLabel;
@@ -19,9 +20,53 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectService extends CoreService
 {
+    public static function getDetail($project_id)
+    {
+        $project = Project::find($project_id);
+        if(!$project){
+            return self::currentReturnFalse([],'该项目不存在.');
+        }
+
+        $project->code = $project->code . '_' . $project->code_index;
+        $project->center_name = Center::where('id',$project->center_id)->value('name');
+        unset($project->code_index);
+        $project->category_name = Category::where('id',$project->category_id)->value('name');
+
+        $module_list = ProjectModule::where('project_id',$project->id)->select(DB::raw('sort,module_id as id'))->get()->toArray();
+        $module_list = $project_module_list = collect($module_list)->groupBy('sort')->toArray();
+
+        foreach ($project_module_list as $key => $value){
+            foreach ($value as $k => $v){
+                if(count($value) > 1){
+                    $project_module_list[$key][$k]['index'] = $key . '-' . ($k+1);
+                }else{
+                    $project_module_list[$key][$k]['index'] = $key;
+                }
+                $project_module_list[$key][$k]['name'] = Module::where('id',$v['id'])->value('name');
+            }
+        }
+        $project->module_list = array_values($project_module_list);
+
+        $module_list = self::getModuleDataForProject($module_list);
+        $project->job_grades = $module_list['job_grades'];
+        $project->module_equipment = $module_list['module_equipment'];
+        $project->module_supplies = $module_list['module_supplies'];
+        $project->module_clinics = $module_list['module_clinics'];
+        $project->whether_medical_name = $module_list['whether_medical_name'];
+        $project->module_working_part_labels = $module_list['module_working_part_labels'];
+        $project->module_contraindications_labels = $module_list['module_contraindications_labels'];
+        $project->module_indications_labels = $module_list['module_indications_labels'];
+        $project->module_function_labels = $module_list['module_function_labels'];
+        $project->gender_limit_name = $module_list['gender_limit_name'];
+        $project->age_limit = $module_list['age_limit'];
+        $project->expected_cost = $module_list['expected_cost'];
+
+        return $project->toArray();
+    }
 
     public static function addAndEditProject($data)
     {
+        //TODO
 //        $check_gender_age = self::checkGenderAge($data['module_equipment'],$data['module_supplies']);
 //        if($check_gender_age == false){
 //            return false;
@@ -51,10 +96,10 @@ class ProjectService extends CoreService
         $project->time             = $data['time'] ? $data['time'] : 0 ;
         $project->market_price     = $data['market_price'] ? $data['market_price'] : 0.00;
         $project->member_price     = $data['member_price'] ? $data['member_price'] : 0.00;
-        $project->considerations   = $data['considerations'] ? $data['considerations'] : '';
-        $project->description      = $data['description'] ? $data['description'] : '';
+//        $project->considerations   = $data['considerations'] ? $data['considerations'] : '';
+//        $project->description      = $data['description'] ? $data['description'] : '';
         $project->adverse_reaction = $data['adverse_reaction'] ? $data['adverse_reaction'] : '';
-        $project->remark           = $data['remark'] ? $data['remark'] : '';
+//        $project->remark           = $data['remark'] ? $data['remark'] : '';
 
         $save_project = $project->save();
 
@@ -64,7 +109,6 @@ class ProjectService extends CoreService
         }
 
         if(isset($data['project_id'])){
-            Project::where('id',$data['project_id'])->delete();
             ProjectLabel::where('project_id',$data['project_id'])->delete();
             ProjectModule::where('project_id',$data['project_id'])->delete();
         }
@@ -73,7 +117,7 @@ class ProjectService extends CoreService
 
         //项目标签表
         //读取模块的标签 禁忌症 作用功能
-        $module_id_list = collect($data['project_module'])->pluck('id')->all();
+        $module_id_list = collect($data['module_list'])->collapse()->pluck('id')->all();
         $module_label_list = ModuleService::getModuleLabelList($module_id_list);
         $module_label_list = collect($module_label_list)->collapse()->all();
         $merge_project_labels = array_merge($data['indications'],$data['working_part']);
@@ -97,11 +141,11 @@ class ProjectService extends CoreService
 
         //反写所选模块的 作用部位和适应症
         if(!empty($merge_project_labels)){
-            foreach ($data['project_module'] as $k => $v){
+            foreach ($module_id_list as $k => $v){
                 foreach ($merge_project_labels as $key => $value){
                     $module_label_data = [
                         'label_id' => $value['id'],
-                        'module_id' => $v['id'],
+                        'module_id' => $v,
                         'center_id' => $project->center_id,
                         'label_category_id' => $value['id'],
                     ];
@@ -113,28 +157,55 @@ class ProjectService extends CoreService
             }
         }
 
-        //项目模块表  TODO 平行诊室
-        if(!empty($data['project_module'])){
-            foreach ($data['project_module'] as $key => $value){
-                $project_module_data = [
-                    'project_id'   => $project->id,
-                    'module_id'    => $value['id']
-                ];
-                $project_module = ProjectModule::firstOrCreate($project_module_data);
-                if(!$project_module){
-                    return self::currentReturnFalse([],'添加项目错误 PROJECT-MODULE-ERROR-6000' . __LINE__);
+        //项目模块表
+        if(!empty($data['module_list'])){
+            foreach ($data['module_list'] as $key => $value){
+                foreach ($value as $k => $v){
+                    $project_module_data = [
+                        'project_id'   => $project->id,
+                        'module_id'    => $v['id'],
+                        'sort'         => $key + 1
+                    ];
+                    $project_module = ProjectModule::firstOrCreate($project_module_data);
+                    if(!$project_module) {
+                        return self::currentReturnFalse([], '添加项目错误 PROJECT-MODULE-ERROR-6000' . __LINE__);
+                    }
+
                 }
             }
         }
 
+        //更新项目的 注意事项 不良反应 备注
+        $module = Module::whereIn('id',$module_id_list)->get(['considerations','adverse_reaction','remark'])->toArray();
+        $module_considerations = collect($module)->pluck('considerations')->implode(',','considerations');
+        $module_adverse_reaction = collect($module)->pluck('adverse_reaction')->implode(',','adverse_reaction');
+        $module_remark =collect($module)->pluck('remark')->implode(',','remark');
+
+        if(!empty($data['considerations'])){
+            $data['considerations'] = $data['considerations'] . '|';
+        }
+
+        if(!empty($data['adverse_reaction'])){
+            $data['adverse_reaction'] = $data['adverse_reaction'] . '|';
+        }
+
+        if(!empty($data['remark'])){
+            $data['remark'] = $data['remark'] . '|';
+        }
+        $project = Project::find($project->id);
+        $project->considerations     = $data['considerations'] . trim($module_considerations,',') ;
+        $project->adverse_reaction   = $data['adverse_reaction'] . trim($module_adverse_reaction,',');
+        $project->remark             = $data['remark'] . trim($module_remark,',');
+        $project->save();
+
         DB::commit();
+
         return true;
     }
 
     public static function getModuleDataForProject($module_list)
     {
-
-        $module_id_list = collect($module_list)->pluck('list')->collapse()->pluck('id')->all();
+        $module_id_list = collect($module_list)->collapse()->pluck('id')->all();
         $module_list = ModuleService::getModuleDetailForProject($module_id_list);
         return $module_list;
     }

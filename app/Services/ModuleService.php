@@ -228,13 +228,28 @@ class ModuleService extends CoreService
 
         //更新模块的 注意事项 不良反应
         $module = Module::find($module->id);
-        $module->considerations     = $data['considerations'] . '|' . $equipment_considerations . '|' . $supplies_considerations;
-        $module->adverse_reaction   = $data['adverse_reaction'] . '|' . $equipment_adverse_reaction . '|' . $supplies_adverse_reaction;
+        if(!empty($data['considerations'])){
+            $data['considerations'] = $data['considerations'] . '|';
+        }
+
+        if(!empty($equipment_considerations)){
+            $equipment_considerations = $equipment_considerations . '|';
+        }
+
+        if(!empty($data['adverse_reaction'])){
+            $data['adverse_reaction'] = $data['adverse_reaction'] . '|';
+        }
+
+        if(!empty($equipment_adverse_reaction)){
+            $equipment_adverse_reaction = $equipment_adverse_reaction . '|';
+        }
+        $module->considerations     = $data['considerations'] . trim($equipment_considerations,',') . trim($supplies_considerations,',');
+        $module->adverse_reaction   = $data['adverse_reaction'] . trim($equipment_adverse_reaction,',') . trim($supplies_adverse_reaction,',');
         $module->save();
 
 
 
-        //模块诊室表 TODO 需要做特殊处理
+        //模块诊室表
         if(!empty($data['module_clinics'])){
             $clinics_mark = [];
             $clinics_id   = [];
@@ -423,7 +438,7 @@ class ModuleService extends CoreService
 
     public static function getModuleLabelList($module_id_list)
     {
-        $list = ModuleLabel::leftJoin('labels','labels.id','=','module_labels.label_id')->whereIn('module_id',$module_id_list)->select(DB::raw('yx_labels.id,yx_labels.name,yx_labels.label_category_id'))->get()->toArray();
+        $list = ModuleLabel::leftJoin('labels','labels.id','=','module_labels.label_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_labels.id'))->select(DB::raw('yx_labels.id,yx_labels.name,yx_labels.label_category_id'))->get()->toArray();
         $list = collect($list)->groupBy('label_category_id')->toArray();
         return $list;
     }

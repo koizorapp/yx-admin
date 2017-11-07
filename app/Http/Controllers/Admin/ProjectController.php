@@ -23,7 +23,13 @@ class ProjectController extends Controller
      */
     protected function getDetail(Request $request)
     {
+        CoreService::validate($request,[
+            'project_id' => 'required | numeric | min:1'
+        ]);
 
+        $project_id = $request->get('project_id');
+        $result = ProjectService::getDetail($project_id);
+        return $this->json($result);
     }
 
     /*
@@ -35,17 +41,14 @@ class ProjectController extends Controller
             'name' => 'required',
             'center_id' => 'required | numeric | min:1',
             'category_id' => 'required | numeric | min:1',
-            'project_module' => 'required | json'
+            'module_list' => 'required | json'
         ]);
         $data['name']             = $request->get('name');
         $data['center_id']        = $request->get('center_id');
         $data['category_id']      = $request->get('category_id');
-        $data['project_module']   = json_decode($request->get('project_module'),true);
+        $data['module_list']      = json_decode($request->get('module_list'),true);
         $data['description']      = $request->get('description');
         $data['time']             = $request->get('time');
-        $data['min_age_limit']    = $request->get('min_age_limit');
-        $data['max_age_limit']    = $request->get('max_age_limit');
-        $data['gender_limit']     = $request->get('gender_limit');
         $data['considerations']   = $request->get('considerations');
         $data['adverse_reaction'] = $request->get('adverse_reaction');
         $data['remark']           = $request->get('remark');
@@ -63,7 +66,28 @@ class ProjectController extends Controller
      */
     protected function editProject(Request $request)
     {
-
+        CoreService::validate($request,[
+            'name' => 'required',
+            'center_id' => 'required | numeric | min:1',
+            'category_id' => 'required | numeric | min:1',
+            'module_list' => 'required | json'
+        ]);
+        $data['name']             = $request->get('name');
+        $data['center_id']        = $request->get('center_id');
+        $data['category_id']      = $request->get('category_id');
+        $data['module_list']      = json_decode($request->get('module_list'),true);
+        $data['description']      = $request->get('description');
+        $data['time']             = $request->get('time');
+        $data['considerations']   = $request->get('considerations');
+        $data['adverse_reaction'] = $request->get('adverse_reaction');
+        $data['remark']           = $request->get('remark');
+        $data['working_part']     = json_decode($request->get('module_working_part_labels','[]'),true);
+        $data['indications']      = json_decode($request->get('module_indications_labels','[]'),true);
+        $data['market_price']     = $request->get('market_price');
+        $data['member_price']     = $request->get('member_price');
+        $data['project_id']       = $request->get('project_id');
+        $result = ProjectService::addAndEditProject($data);
+        return $result ? $this->json() : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
     }
 
     /*
