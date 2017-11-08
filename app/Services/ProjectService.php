@@ -105,7 +105,7 @@ class ProjectService extends CoreService
 //        }
 
         $check_name = Project::where('name',$data['name'])->where('center_id',$data['center_id'])->exists();
-        if($check_name && !isset($data['equipment_id'])){
+        if($check_name && !isset($data['project_id'])){
             return self::currentReturnFalse([],'项目名称重复');
         }
 
