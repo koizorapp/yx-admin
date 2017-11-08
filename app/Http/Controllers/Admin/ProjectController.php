@@ -34,7 +34,7 @@ class ProjectController extends Controller
 
         $project_id = $request->get('project_id');
         $result = ProjectService::getDetail($project_id);
-        return $this->json($result);
+        return $result ? $this->json($result) : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
     }
 
     /*
