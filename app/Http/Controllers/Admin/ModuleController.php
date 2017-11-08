@@ -76,7 +76,7 @@ class ModuleController extends Controller
         $data['description']        = $request->get('description','');
         $data['remark']             = $request->get('remark','');
         $data['expected_cost']      = $request->get('expected_cost');
-        $data['working_part']       = json_decode($request->get('module_working_part_labels','[]'),true);//TODO 作用部位 JSON
+        $data['function']           = json_decode($request->get('module_function_labels','[]'),true);//TODO 作用部位 JSON
         $data['contraindications']  = json_decode($request->get('module_contraindications_labels','[]'),true);//TODO 禁忌症 JSON
         $data['module_equipment']   = json_decode($request->get('module_equipment','[]'),true);//TODO 设备 JSON
         $data['module_supplies']    = json_decode($request->get('module_supplies','[]'),true);//TODO 用品 JSON
