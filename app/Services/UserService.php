@@ -16,6 +16,8 @@ class UserService extends CoreService
 {
     public static function login($email,$password,$request)
     {
+        \Redis::set('a','b');
+        echo 1;die;
     }
 
     public static function logout()
