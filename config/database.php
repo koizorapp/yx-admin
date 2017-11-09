@@ -114,7 +114,9 @@ return [
             'port' => env('REDIS_PORT', 6379),
             'database' => 0,
         ],
-
+        'options' => [
+            'prefix'=>env('REDIS_PREFIX', 'yx_'),
+        ],
     ],
 
 ];

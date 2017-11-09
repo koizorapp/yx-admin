@@ -16,6 +16,9 @@ Route::get('/', function () {
 //    return view('welcome');
 });
 
+//用户
+Route::get('user/logout','UserController@logout');
+Route::post('user/login','UserController@login');
 
 
 //中心
