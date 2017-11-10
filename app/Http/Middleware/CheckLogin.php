@@ -19,6 +19,9 @@ class CheckLogin
 
     public function handle($request,\Closure $next)
     {
+        if('dev' == env('APP_ENV') || 'local' == env('APP_ENV')){
+            return $next($request);
+        }
         $request_data = $request->all();
         if(!isset($request_data['token'])){
             return \Illuminate\Support\Facades\Response::json(['status' => 20000 , 'msg' => '非法请求' , 'data' => []]);

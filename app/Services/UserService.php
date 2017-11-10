@@ -43,9 +43,10 @@ class UserService extends CoreService
         }
     }
 
-    public static function logout()
+    public static function logout($token)
     {
-
+        \Redis::del(sprintf(self::KEY_TOKEN_USER, $token));
+        return true;
     }
 
     public static function generationToken(){

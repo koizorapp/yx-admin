@@ -25,6 +25,8 @@ class UserController extends Controller
      */
     protected function logout(Request $request)
     {
-
+        $token = $request->get('token');
+        $result = UserService::logout($token);
+        return $this->json();
     }
 }

@@ -94,6 +94,13 @@ class ProjectService extends CoreService
         $project->expected_cost = $module_list['expected_cost'];
         $project->module_list_view = collect($project->module_list)->collapse()->all();
 
+        //上一条
+        $last_id = Project::where('id','<',$project->id)->max('id');
+        $project->last_id = $last_id;
+        //下一条
+        $next_id = Project::where('id','>',$project->id)->min('id');
+        $project->next_id = $next_id;
+
         return $project->toArray();
     }
 
