@@ -124,6 +124,7 @@ class SuppliesService extends CoreService
         $supplies->supplies_contraindications_labels = $contraindications;
         $supplies->center_name  = Center::where('id',$supplies->center_id)->value('name');
         $supplies->gender_limit_name = self::$gender_data[$supplies->gender_limit];
+        $supplies->age_limit = ModuleService::ageLimit($supplies->min_age_limit,$supplies->max_age_limit);
 
         //图片 附件
         $supplies->attachments = [];
