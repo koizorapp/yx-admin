@@ -102,7 +102,7 @@ class ModuleController extends Controller
     protected function getModuleListForSearch(Request $request)
     {
         $center_id = $request->get('center_id');
-        $label_category_id = $request->get('label_category_id')
+        $label_category_id = $request->get('label_category_id');
         $label_key_word = $request->get('label_key_word');
         $result = ModuleService::getModuleListForSearch($center_id,$label_category_id,$label_key_word);
 //        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
