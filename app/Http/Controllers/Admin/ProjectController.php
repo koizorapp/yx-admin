@@ -114,7 +114,8 @@ class ProjectController extends Controller
         $label_category_id = $request->get('label_category_id');
         $label_key_word = $request->get('label_key_word');
         $result = ProjectService::getProjectListForSearch($center_id,$label_category_id,$label_key_word);
-        return $result ? $this->json($result) : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
+//        return $result ? $this->json($result) : $this->json(ProjectService::getLastData(),ProjectService::getLastMsg(),ProjectService::getLastStatus());
+        return $this->json($result);
     }
 
     /*

@@ -105,7 +105,8 @@ class ModuleController extends Controller
         $label_category_id = $request->get('label_category_id');
         $label_key_word = $request->get('label_key_word');
         $result = ModuleService::getModuleListForSearch($center_id,$label_category_id,$label_key_word);
-        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
+//        return $result ? $this->json($result) : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
+        return $this->json($result);
     }
 
     /*

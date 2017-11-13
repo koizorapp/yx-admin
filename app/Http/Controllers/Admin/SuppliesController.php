@@ -38,7 +38,8 @@ class SuppliesController extends Controller
         $label_key_word = $request->get('label_key_word');
 //        $current_page = $request->get('current_page');
         $result = SuppliesService::getSuppliesListForSearch($center_id,$label_category_id,$label_key_word);
-        return $result ? $this->json($result) : $this->json(SuppliesService::getLastData(),SuppliesService::getLastMsg(),SuppliesService::getLastStatus());
+//        return $result ? $this->json($result) : $this->json(SuppliesService::getLastData(),SuppliesService::getLastMsg(),SuppliesService::getLastStatus());
+        return $this->json($result);
     }
 
     /*

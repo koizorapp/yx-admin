@@ -17,12 +17,12 @@
 Route::get('user/logout','UserController@logout');
 Route::post('user/login','UserController@login');
 
-Route::group(['middleware' => ['checkLogin']], function () {
-    Route::get('/', function () {
-        return view('index');
+Route::get('/', function () {
+    return view('index');
 //    return view('welcome');
-    });
+});
 
+Route::group(['middleware' => ['checkLogin']], function () {
     //中心
     Route::get('center/list','CenterController@getCenterList');
     Route::post('center/add','CenterController@addCenter');
