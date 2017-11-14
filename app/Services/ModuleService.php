@@ -93,7 +93,8 @@ class ModuleService extends CoreService
         //下一条
         $next_id = Module::where('id','>',$module->id)->min('id');
         $module->next_id = $next_id;
-
+        $module->min_age_limit = $module->min_age_limit == 0 ? '' : $module->min_age_limit;
+        $module->max_age_limit = $module->max_age_limit == 151 ? '' : $module->max_age_limit;
 
         return $module->toArray();
         //录入加模块和 TODO 详情  注意事项 不良反应 写入的时候添加
@@ -131,8 +132,8 @@ class ModuleService extends CoreService
         $module->service_time       = empty($data['service_time']) ? 0 : $data['service_time'];
         $module->service_after_time = empty($data['service_after_time']) ? 0 : $data['service_after_time'];
         $module->whether_medical    = empty($data['whether_medical']) ? 0 : $data['whether_medical'];
-        $module->min_age_limit      = $data['min_age_limit'];
-        $module->max_age_limit      = $data['max_age_limit'];
+        $module->min_age_limit      = empty($data['min_age_limit']) ? 0 : $data['min_age_limit'];
+        $module->max_age_limit      = empty($data['max_age_limit']) ? 151 : $data['max_age_limit'];
         $module->gender_limit       = $data['gender_limit'];
 //        $module->considerations     = $data['considerations'];//TODO
 //        $module->adverse_reaction   = $data['adverse_reaction'];//TODO
@@ -374,8 +375,8 @@ class ModuleService extends CoreService
         $gender_limit = collect($limit)->pluck('gender_limit')->unique()->all();
 
         //TODO 处理性别限制
-        $min_age = max($min_age_limit);
-        $max_age = min($max_age_limit);
+        $min_age = empty($min_age_limit) ? '' : max($min_age_limit);
+        $max_age = empty($max_age_limit) ? '' : min($max_age_limit);
 
         $gender_sum = collect($gender_limit)->sum();
         $gender = $gender_sum; //TODO 性别限制的值不能修改

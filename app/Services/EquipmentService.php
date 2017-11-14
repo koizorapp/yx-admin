@@ -142,6 +142,9 @@ class EquipmentService extends CoreService
         $next_id = Equipment::where('id','>',$equipment_id)->min('id');
         $equipment->next_id = $next_id;
 
+        $equipment->min_age_limit = $equipment->min_age_limit == 0 ? '' : $equipment->min_age_limit;
+        $equipment->max_age_limit = $equipment->max_age_limit == 151 ? '' : $equipment->max_age_limit;
+
         return $equipment->toArray();
     }
     public static function addAndEditEquipment($data)

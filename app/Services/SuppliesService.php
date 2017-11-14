@@ -137,6 +137,8 @@ class SuppliesService extends CoreService
         $next_id = Supplies::where('id','>',$supplies_id)->min('id');
         $supplies->next_id = $next_id;
 
+        $supplies->min_age_limit = $supplies->min_age_limit == 0 ? '' : $supplies->min_age_limit;
+        $supplies->max_age_limit = $supplies->max_age_limit == 151 ? '' : $supplies->max_age_limit;
         return $supplies->toArray();
     }
 
