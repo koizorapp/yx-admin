@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use App\Services\JobGradeService;
 use App\Services\ModuleService;
 use Illuminate\Http\Request;
@@ -34,6 +35,16 @@ class ModuleController extends Controller
      */
     protected function addModule(Request $request)
     {
+        CoreService::validate($request,[
+            'name'         => 'required',
+            'center_id'    => 'required | numeric | min:1',
+            'job_grades'    => 'required | json',
+            'whether_medical' => 'required',
+            'service_time' => 'required',
+            'service_after_time' => 'required',
+            'gender_limit' => 'required',
+            'module_clinics' => 'required | json',
+        ]);
         $data['name']               = $request->get('name');
         $data['center_id']          = $request->get('center_id');
         $data['job_grades']         = json_decode($request->get('job_grades'),true); //TODO 执行人等级 JSON
@@ -62,6 +73,17 @@ class ModuleController extends Controller
      */
     protected function editModule(Request $request)
     {
+        CoreService::validate($request,[
+            'name'         => 'required',
+            'center_id'    => 'required | numeric | min:1',
+            'job_grades'    => 'required | json',
+            'whether_medical' => 'required',
+            'service_time' => 'required',
+            'service_after_time' => 'required',
+            'gender_limit' => 'required',
+            'module_clinics' => 'required | json',
+        ]);
+
         $data['name']               = $request->get('name');
         $data['center_id']          = $request->get('center_id');
         $data['job_grades']         = json_decode($request->get('job_grades'),true); //TODO 执行人等级 JSON
@@ -93,7 +115,7 @@ class ModuleController extends Controller
     {
         $module_id = $request->get('module_id');
         $result = ModuleService::delModule($module_id);
-        return $result ? $this->json() : $this->json(EquipmentService::getLastData(),EquipmentService::getLastMsg(),EquipmentService::getLastStatus());
+        return $result ? $this->json() : $this->json(ModuleService::getLastData(),ModuleService::getLastMsg(),ModuleService::getLastStatus());
     }
 
     /*

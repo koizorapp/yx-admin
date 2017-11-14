@@ -108,6 +108,10 @@ class ModuleService extends CoreService
             return false;
         }
 
+        if(empty($data['job_grades'])){
+            return self::currentReturnFalse([],'执行人等级不能为空 ERROR-CODE-' . __LINE__);
+        }
+
         $check_name = Module::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
         $name_index = 0;
         if($check_name){
