@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Clinics;
 use App\Services\ClinicsService;
+use App\Services\CoreService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -33,6 +34,10 @@ class ClinicsController extends Controller
      */
     protected function addClinics(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'center_id' => 'required | numeric | min:1'
+        ]);
         $name = $request->get('name');
         $center_id = $request->get('center_id');
         $result = ClinicsService::addClinics($name,$center_id);
@@ -44,6 +49,11 @@ class ClinicsController extends Controller
      */
     protected function addParallelClinics(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'center_id' => 'required | numeric | min:1',
+            'clinics_list' => 'required | json'
+        ]);
         $center_id = $request->get('center_id');
         $name = $request->get('name');
         $clinics_list = json_decode($request->get('clinics_list'),true);
@@ -56,6 +66,11 @@ class ClinicsController extends Controller
      */
     protected function editClinics(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'center_id' => 'required | numeric | min:1',
+            'clinics_id' => 'required'
+        ]);
         $name = $request->get('name');
         $center_id = $request->get('center_id');
         $clinics_id = $request->get('clinics_id');

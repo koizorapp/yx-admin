@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\CenterService;
@@ -22,6 +23,10 @@ class CenterController extends Controller
      */
     protected function addCenter(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'code' => 'required',
+        ]);
         $name = $request->get('name');
         $code = $request->get('code');
         $result = CenterService::addCenter($name,$code);
@@ -33,6 +38,12 @@ class CenterController extends Controller
      */
     protected function editCenter(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'code' => 'required',
+            'center_id' => 'required | numeric | min:1'
+        ]);
+
         $center_id = $request->get('center_id');
         $name      = $request->get('name');
         $code      = $request->get('code');

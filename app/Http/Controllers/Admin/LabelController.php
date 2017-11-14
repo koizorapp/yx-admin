@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use App\Services\LabelService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -32,6 +33,11 @@ class LabelController extends Controller
      */
     protected function addLabel(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'label_category_id' => 'required',
+        ]);
+
         $name = $request->get('name');
         $label_category_id = $request->get('label_category_id');
         $result = LabelService::addLabel($name,$label_category_id);
@@ -43,6 +49,11 @@ class LabelController extends Controller
      */
     protected function editLabel(Request $request)
     {
+        CoreService::validate($request,[
+            'name' => 'required',
+            'label_category_id' => 'required',
+            'label_id' => 'required'
+        ]);
         $name = $request->get('name');
         $label_category_id = $request->get('label_category_id');
         $label_id = $request->get('label_id');
