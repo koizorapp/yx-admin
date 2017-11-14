@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Services\CoreService;
 use App\Services\SuppliesService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -67,6 +68,12 @@ class SuppliesController extends Controller
      */
     protected function editSupplies(Request $request)
     {
+        CoreService::validate($request,[
+            'code'         => 'required',
+            'name'         => 'required',
+            'center_id'    => 'required | numeric | min:1',
+            'gender_limit' => 'required',
+        ]);
         $data['code']                  = $request->get('code');//TODO 重复录入校验 //TODO 必填
         $data['name']                  = $request->get('name');//TODO 已经存在 自动加一 //TODO 必填
         $data['english_name']          = $request->get('english_name','');
@@ -100,6 +107,13 @@ class SuppliesController extends Controller
      */
     protected function addSupplies(Request $request)
     {
+        CoreService::validate($request,[
+            'code'         => 'required',
+            'name'         => 'required',
+            'center_id'    => 'required | numeric | min:1',
+            'gender_limit' => 'required',
+        ]);
+
         $data['code']                  = $request->get('code');//TODO 重复录入校验 //TODO 必填
         $data['name']                  = $request->get('name');//TODO 已经存在 自动加一 //TODO 必填
         $data['english_name']          = $request->get('english_name','');

@@ -94,7 +94,9 @@ return [
         'job_grades' => '执行人等级',
         'service_time' => '服务时间',
         'service_after_time' => '服务后时间',
-        'module_clinics' => '诊室'
+        'module_clinics' => '诊室',
+        'code' => '编码',
+        'name' => '名称'
 
 
     ]
