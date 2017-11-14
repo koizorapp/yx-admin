@@ -360,7 +360,8 @@ class ModuleService extends CoreService
     public static function checkGenderAge($equipment_list,$supplies_list,$center_id)
     {
         if(empty($supplies_list) && empty($equipment_list)){
-            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => '' ,'clinics_list' => []];
+            $clinics_center_list = Clinics::where('center_id',$center_id)->get(['id','name','mark'])->toArray();
+            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => '' ,'clinics_list' => $clinics_center_list];
         }
         $equipment_id_list = collect($equipment_list)->pluck('id')->all();
         $supplies_id_list  = collect($supplies_list)->pluck('id')->all();
