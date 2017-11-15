@@ -11,7 +11,7 @@ namespace App\Services;
 
 use App\Models\Label;
 
-class LabelService
+class LabelService extends CoreService
 {
     protected static $labelCategory = [
         1 => '适应症',
@@ -42,14 +42,19 @@ class LabelService
 
     public static function addLabel($name,$label_category_id)
     {
-        $result = new Label();
-        $result->name = $name;
-        $result->label_category_id = $label_category_id;
-        return $result->save();
+        $label = Label::firstOrCreate([
+            'name' => $name,
+            'label_category_id' => $label_category_id,
+        ]);
+        return $label;
     }
 
     public static function editLabel($name,$label_category_id,$label_id)
     {
+        $exists = Label::where('name',$name)->where('label_category_id',$label_category_id)->value('id');
+        if($exists != $label_id){
+            return self::currentReturnFalse([],'该数据已经存在,请勿重复添加.');
+        }
         $result = Label::find($label_id);
         $result->name = $name;
         $result->label_category_id = $label_category_id;

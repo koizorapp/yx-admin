@@ -58,7 +58,7 @@ class LabelController extends Controller
         $label_category_id = $request->get('label_category_id');
         $label_id = $request->get('label_id');
         $result = LabelService::editLabel($name,$label_category_id,$label_id);
-        return $result ? $this->json() :  $this->json([],'error',5000);
+        return $result ? $this->json() : $this->json(LabelService::getLastData(),LabelService::getLastMsg(),LabelService::getLastStatus());
     }
 
     /*
