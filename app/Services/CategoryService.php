@@ -43,7 +43,7 @@ class CategoryService extends CoreService
     public static function editCategory($category_id,$center_id, $name, $code)
     {
         $exists   = Category::where('center_id',$center_id)->where('name',$name)->where('code',$code)->value('id');
-        if($exists != $category_id){
+        if($exists && ($exists != $category_id)){
             return self::currentReturnFalse([],'该数据已经存在,请勿重复添加.');
         }
         $category = Category::find($category_id);

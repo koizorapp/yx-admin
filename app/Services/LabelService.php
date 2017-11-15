@@ -52,7 +52,7 @@ class LabelService extends CoreService
     public static function editLabel($name,$label_category_id,$label_id)
     {
         $exists = Label::where('name',$name)->where('label_category_id',$label_category_id)->value('id');
-        if($exists != $label_id){
+        if($exists && ($exists != $label_id)){
             return self::currentReturnFalse([],'该数据已经存在,请勿重复添加.');
         }
         $result = Label::find($label_id);
