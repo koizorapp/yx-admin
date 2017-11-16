@@ -438,7 +438,7 @@ class ModuleService extends CoreService
 
     public static function getModuleClinicsList($module_id_list)
     {
-        $list = ModuleClinics::leftJoin('clinics','clinics.id','=','module_clinics.clinics_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_clinics.id'))->select(DB::raw('yx_clinics.id,yx_clinics.name'))->get()->toArray();
+        $list = ModuleClinics::leftJoin('clinics','clinics.id','=','module_clinics.clinics_id')->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_clinics.id'))->select(DB::raw('yx_clinics.id,yx_clinics.name,yx_clinics.mark'))->get()->toArray();
         return $list;
     }
 
