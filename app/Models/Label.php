@@ -12,6 +12,6 @@ class Label extends Model
     protected $table = 'labels';
 
     protected $fillable = [
-        'name','label_category'
+        'name','label_category_id'
     ];
 }
