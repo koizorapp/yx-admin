@@ -6,6 +6,7 @@ use App\Services\CoreService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\CenterService;
+use Illuminate\Support\Facades\Mail;
 
 class CenterController extends Controller
 {
