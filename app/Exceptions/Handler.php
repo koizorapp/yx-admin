@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
         if(!$this->shouldReport($exception)){
             return parent::report($exception);
         }
-        if('local' == env('APP_ENV') ){
+        if('local' == env('APP_ENV') || 'production' == env('APP_ENV')){
             //邮件发送失败，过滤
 //            if(strpos($exception->getTraceAsString(), 'swiftmailer')){
 //                return parent::report($exception);
