@@ -15,7 +15,7 @@ class CenterController extends Controller
      */
     protected function getCenterList(Request $request)
     {
-        $list = CenterService::getCenterList();
+        $list = CenterService::getCenterList()
         return $this->json($list);
     }
 

@@ -72,7 +72,7 @@ class Handler extends ExceptionHandler
             Mail::raw($body, function ($m) use($hostname) {
                 $m->from(env('MAIL_USERNAME'), $hostname)
                     ->subject($hostname.'报错')
-                    ->to('huangjianyu@lavionlife.com', '测试邮件')
+                    ->to('liulei@lavionlife.com', '测试邮件')
                 ;
             });
 
