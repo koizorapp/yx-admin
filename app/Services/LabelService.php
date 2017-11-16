@@ -42,6 +42,10 @@ class LabelService extends CoreService
 
     public static function addLabel($name,$label_category_id)
     {
+        $exists = Label::where('name',$name)->where('label_category_id',$label_category_id)->exists();
+        if($exists){
+            return self::currentReturnFalse([],'该数据已经存在,请勿重复添加.');
+        }
         $label = Label::firstOrCreate([
             'name' => $name,
             'label_category_id' => $label_category_id,
