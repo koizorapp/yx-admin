@@ -72,8 +72,8 @@ class Handler extends ExceptionHandler
             Mail::raw($body, function ($m) use($hostname) {
                 $m->from(env('MAIL_USERNAME'), $hostname)
                     ->subject($hostname.'报错')
-                    ->to('liulei@lavionlife.com', '产品中心')
-                    ->to('liufei@lavionlife.com', '产品中心')
+                    ->to('liulei@lavionlife.com', '服务端')
+                    ->to('liufei@lavionlife.com', '客户端')
                     ->to('gaoxuedong@lavionlife.com', '产品中心')
                 ;
             });
