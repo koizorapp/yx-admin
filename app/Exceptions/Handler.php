@@ -42,7 +42,6 @@ class Handler extends ExceptionHandler
             return parent::report($exception);
         }
         if('local' == env('APP_ENV') || 'production' == env('APP_ENV')){
-            echo 1;die;
             //邮件发送失败，过滤
 //            if(strpos($exception->getTraceAsString(), 'swiftmailer')){
 //                return parent::report($exception);
@@ -102,6 +101,8 @@ class Handler extends ExceptionHandler
 //                \Log::error($m->getMessage());
 //            }
         }
+        echo 12;die;
+
         parent::report($exception);
     }
 
