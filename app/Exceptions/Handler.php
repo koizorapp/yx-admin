@@ -69,16 +69,12 @@ class Handler extends ExceptionHandler
             $body .= $exception->getMessage() . PHP_EOL . PHP_EOL;
             $body .= $exception->getTraceAsString();
 
-            echo 'AA';
             Mail::raw($body, function ($m) use($hostname) {
                 $m->from(env('MAIL_USERNAME'), $hostname)
                     ->subject($hostname.'报错')
                     ->to('liulei@lavionlife.com', '产品中心')
                 ;
             });
-
-            echo 1223;
-
 
             //相同的内容每5分钟发一次
 //            $key = sprintf("MAIL_error_%s", md5($body));
@@ -105,8 +101,6 @@ class Handler extends ExceptionHandler
 //                \Log::error($m->getMessage());
 //            }
         }
-        echo 12;die;
-
         parent::report($exception);
     }
 
