@@ -39,9 +39,9 @@ class ModuleController extends Controller
             'name'         => 'required',
             'center_id'    => 'required | numeric | min:1',
             'job_grades'    => 'required | json',
-            'whether_medical' => 'required',
-            'service_time' => 'required',
-            'service_after_time' => 'required',
+            'whether_medical' => 'required | numeric',
+            'service_time' => 'required | numeric',
+            'service_after_time' => 'required | numeric',
             'gender_limit' => 'required',
             'module_clinics' => 'required | json',
         ]);
