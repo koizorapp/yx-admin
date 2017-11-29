@@ -313,7 +313,7 @@ class ModuleService extends CoreService
                     'label_id' => $value['id'],
                     'module_id' => $module->id,
                     'center_id' => $module->center_id,
-                    'label_category_id' => $value['id'],
+                    'label_category_id' => $value['label_category_id'],
                 ];
                 $module_label = ModuleLabel::firstOrCreate($module_label_data);
                 if(!$module_label){

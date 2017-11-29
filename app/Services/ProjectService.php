@@ -179,7 +179,7 @@ class ProjectService extends CoreService
                     'label_id' => $value['id'],
                     'project_id' => $project->id,
                     'center_id' => $project->center_id,
-                    'label_category_id' => $value['id'],
+                    'label_category_id' => $value['label_category_id'],
                 ];
                 $project_label = ProjectLabel::firstOrCreate($project_label_data);
                 if(!$project_label){
@@ -196,7 +196,7 @@ class ProjectService extends CoreService
                         'label_id' => $value['id'],
                         'module_id' => $v,
                         'center_id' => $project->center_id,
-                        'label_category_id' => $value['id'],
+                        'label_category_id' => $value['label_category_id'],
                     ];
                     $module_label = ModuleLabel::firstOrCreate($module_label_data);
                     if(!$module_label){
