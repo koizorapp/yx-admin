@@ -101,6 +101,11 @@ class ProjectService extends CoreService
         $next_id = Project::where('id','>',$project->id)->min('id');
         $project->next_id = $next_id;
 
+        //模块注意事项 不良反应 备注
+        $other_data = ModuleService::getModuleOtherData(collect($module_list)->collapse()->pluck('id')->all(),2,$project_id);
+        $project->show_considerations = $other_data['considerations'];
+        $project->show_adverse_reaction = $other_data['adverse_reaction'];
+        $project->show_remark = $other_data['remark'];
         return $project->toArray();
     }
 
@@ -136,10 +141,10 @@ class ProjectService extends CoreService
         $project->time             = $data['time'] ? $data['time'] : 0 ;
         $project->market_price     = $data['market_price'] ? $data['market_price'] : 0.00;
         $project->member_price     = $data['member_price'] ? $data['member_price'] : 0.00;
-//        $project->considerations   = $data['considerations'] ? $data['considerations'] : '';
-//        $project->description      = $data['description'] ? $data['description'] : '';
+        $project->considerations   = $data['considerations'] ? $data['considerations'] : '';
+        $project->description      = $data['description'] ? $data['description'] : '';
         $project->adverse_reaction = $data['adverse_reaction'] ? $data['adverse_reaction'] : '';
-//        $project->remark           = $data['remark'] ? $data['remark'] : '';
+        $project->remark           = $data['remark'] ? $data['remark'] : '';
 
         $save_project = $project->save();
 
@@ -216,7 +221,7 @@ class ProjectService extends CoreService
         }
 
         //更新项目的 注意事项 不良反应 备注
-        $module = Module::whereIn('id',$module_id_list)->get(['considerations','adverse_reaction','remark'])->toArray();
+       /* $module = Module::whereIn('id',$module_id_list)->get(['considerations','adverse_reaction','remark'])->toArray();
         $module_considerations = collect($module)->pluck('considerations')->implode(',','considerations');
         $module_adverse_reaction = collect($module)->pluck('adverse_reaction')->implode(',','adverse_reaction');
         $module_remark =collect($module)->pluck('remark')->implode(',','remark');
@@ -236,7 +241,7 @@ class ProjectService extends CoreService
         $project->considerations     = $data['considerations'] . trim($module_considerations,',') ;
         $project->adverse_reaction   = $data['adverse_reaction'] . trim($module_adverse_reaction,',');
         $project->remark             = $data['remark'] . trim($module_remark,',');
-        $project->save();
+        $project->save();*/
 
         DB::commit();
 

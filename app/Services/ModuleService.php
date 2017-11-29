@@ -21,6 +21,7 @@ use App\Models\ModuleJobGrade;
 use App\Models\ModuleLabel;
 use App\Models\ModuleSupplies;
 use App\Models\Personnel;
+use App\Models\Project;
 use App\Models\Supplies;
 use Illuminate\Support\Facades\DB;
 
@@ -96,9 +97,137 @@ class ModuleService extends CoreService
         $module->min_age_limit = $module->min_age_limit == 0 ? '' : $module->min_age_limit;
         $module->max_age_limit = $module->max_age_limit == 151 ? '' : $module->max_age_limit;
 
-        return $module->toArray();
         //录入加模块和 TODO 详情  注意事项 不良反应 写入的时候添加
+        $other_data = self::getModuleOtherData([$module_id],1);
+        $module->show_considerations = $other_data['considerations'];
+        $module->show_adverse_reaction = $other_data['adverse_reaction'];
 
+        return $module->toArray();
+
+    }
+
+    public static function getModuleOtherData(array $module_id,$i = 1,$project_id = null)
+    {
+        $module = Module::whereIn('id',$module_id)->get(['considerations','adverse_reaction','remark'])->toArray();
+        $supplies = ModuleSupplies::whereIn('module_id',$module_id)->leftJoin('supplies','supplies.id','=','module_supplies.supplies_id')->select(DB::raw('yx_supplies.considerations,yx_supplies.adverse_reaction'))->get()->toArray();
+        $equipment = ModuleEquipment::whereIn('module_id',$module_id)->leftJoin('equipments','equipments.id','=','module_equipments.equipment_id')->select(DB::raw('yx_equipments.considerations,yx_equipments.adverse_reaction'))->get()->toArray();
+
+        $module_considerations = '';
+        $module_adverse_reaction = '';
+        $supplies_considerations    = '';
+        $supplies_adverse_reaction  = '';
+        $equipment_considerations   = '';
+        $equipment_adverse_reaction = '';
+        if(!empty($supplies)){
+            $supplies_considerations = collect($supplies)->pluck('considerations')->implode('considerations',',');
+//                $supplies_considerations = collect($supplies)->pluck('considerations')->all();
+            $supplies_adverse_reaction = collect($supplies)->pluck('adverse_reaction')->implode('adverse_reaction',',');
+//                $supplies_adverse_reaction = collect($supplies)->pluck('adverse_reaction')->all();
+        }
+
+        if(!empty($equipment)){
+            $equipment_considerations = collect($equipment)->pluck('considerations')->implode('considerations',',');
+//                $equipment_considerations = collect($equipment)->pluck('considerations')->all();
+            $equipment_adverse_reaction = collect($equipment)->pluck('adverse_reaction')->implode('adverse_reaction',',');
+//                $equipment_adverse_reaction = collect($equipment)->pluck('adverse_reaction')->all();
+        }
+
+        if($module){
+            $module_considerations = collect($module)->pluck('considerations')->implode('considerations',',');
+            $module_adverse_reaction = collect($module)->pluck('adverse_reaction')->implode('adverse_reaction',',');
+        }
+
+        /*if($supplies_considerations){
+            $s_considerations = $supplies_considerations;
+        }
+
+        if($equipment_considerations){
+            $e_considerations = $equipment_considerations;
+        }
+
+        if($supplies_adverse_reaction){
+            $s_adverse_reaction = $supplies_adverse_reaction;
+        }
+
+        if($equipment_adverse_reaction){
+            $e_adverse_reaction = $equipment_adverse_reaction;
+        }*/
+//            $module->show_considerations = array_values($considerations);
+//            $module->show_adverse_reaction = array_values($adverse_reaction);
+
+
+        if($module_considerations){
+            $considerations[1]['title'] = '该模块注意事项:';
+            $considerations[1]['content'] = $module_considerations;
+        }
+        if($supplies_considerations){
+            $considerations[2]['title'] = '所选用品注意事项:';
+            $considerations[2]['content'] = $supplies_considerations;
+        }
+        if($equipment_considerations){
+            $considerations[3]['title'] = '所选设备注意事项:';
+            $considerations[3]['content'] = $equipment_considerations;
+        }
+
+        if($module_adverse_reaction){
+            $adverse_reaction[1]['title'] = '该模块不良反应:';
+            $adverse_reaction[1]['content'] = $module_considerations;
+        }
+        if($supplies_adverse_reaction){
+            $adverse_reaction[2]['title'] = '所选用品不良反应:';
+            $adverse_reaction[2]['content'] = $supplies_adverse_reaction;
+        }
+        if($equipment_adverse_reaction){
+            $adverse_reaction[3]['title'] = '所选设备不良反应:';
+            $adverse_reaction[3]['content'] = $equipment_adverse_reaction;
+        }
+        $considerations = array_values($considerations);
+        $adverse_reaction = array_values($adverse_reaction);
+
+        if($i == 1){
+            return ['considerations' => $considerations ,'adverse_reaction' => $adverse_reaction];
+        }else{
+            $module_considerations = collect($considerations)->pluck('content')->implode('content',',');
+            $module_adverse_reaction = collect($adverse_reaction)->pluck('content')->implode('content',',');
+
+            $project = Project::where('id',$project_id)->first(['considerations','adverse_reaction','remark']);
+
+            if($project->considerations){
+                $p_considerations[1]['title'] = '该项目的注意事项:';
+                $p_considerations[1]['content'] = $project->considerations;
+            }
+
+            if($module_considerations){
+                $p_considerations[2]['title'] = '所选模块的注意事项:';
+                $p_considerations[2]['content'] = $module_considerations;
+            }
+
+
+            if($project->adverse_reaction){
+                $p_adverse_reaction[1]['title'] = '该项目的不良反应:';
+                $p_adverse_reaction[1]['content'] = $project->adverse_reaction;
+            }
+
+            if($module_adverse_reaction){
+                $p_adverse_reaction[2]['title'] = '所选模块的不良反应:';
+                $p_adverse_reaction[2]['content'] = $module_adverse_reaction;
+            }
+
+            $remark = [];
+            if($project->remark){
+                $remark[1]['title'] = '该项目的备注:';
+                $remark[1]['content'] = $project->remark;
+            }
+
+            $module_remark = collect($module)->pluck('remark')->implode('remark',',');
+            if($module_remark){
+                $remark[2]['title'] = '所选模块的备注:';
+                $remark[2]['content'] = $module_remark;
+            }
+
+            return ['considerations' => array_values($p_considerations) ,'adverse_reaction' => array_values($p_adverse_reaction) ,'remark' => array_values($remark)];
+
+        }
     }
 
     public static function addAndEditModule($data)
@@ -139,8 +268,8 @@ class ModuleService extends CoreService
         $module->min_age_limit      = empty($data['min_age_limit']) ? 0 : $data['min_age_limit'];
         $module->max_age_limit      = empty($data['max_age_limit']) ? 151 : $data['max_age_limit'];
         $module->gender_limit       = $data['gender_limit'];
-//        $module->considerations     = $data['considerations'];//TODO
-//        $module->adverse_reaction   = $data['adverse_reaction'];//TODO
+        $module->considerations     = empty($data['considerations']) ? '' : $data['considerations'];//TODO
+        $module->adverse_reaction   = empty($data['adverse_reaction']) ? '' : $data['adverse_reaction'];//TODO
         $module->description        = $data['description'] ? $data['description'] : '';
         $module->expected_cost      = $data['expected_cost'] ? $data['expected_cost'] : 0;
         $module->remark             = $data['remark'] ? $data['remark'] : '';
@@ -232,7 +361,7 @@ class ModuleService extends CoreService
         }
 
         //更新模块的 注意事项 不良反应
-        $module = Module::find($module->id);
+        /*$module = Module::find($module->id);
         if(!empty($data['considerations'])){
             $data['considerations'] = $data['considerations'] . '|';
         }
@@ -250,7 +379,7 @@ class ModuleService extends CoreService
         }
         $module->considerations     = $data['considerations'] . trim($equipment_considerations,',') . trim($supplies_considerations,',');
         $module->adverse_reaction   = $data['adverse_reaction'] . trim($equipment_adverse_reaction,',') . trim($supplies_adverse_reaction,',');
-        $module->save();
+        $module->save();*/
 
 
 
