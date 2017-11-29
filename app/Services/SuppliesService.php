@@ -225,7 +225,7 @@ class SuppliesService extends CoreService
                     'label_id' => $value['id'],
                     'supplies_id' => $supplies->id,
                     'center_id' => $supplies->center_id,
-                    'label_category_id' => $value['id'],
+                    'label_category_id' => $value['label_category_id'],
                 ];
                 $supplies_label = SuppliesLabel::firstOrCreate($supplies_label_data);
                 if(!$supplies_label){

@@ -537,7 +537,8 @@ class ModuleService extends CoreService
             }
         }
         $s_label = SuppliesLabel::whereIn('supplies_id',$supplies_id_list)->where('supplies_labels.label_category_id','2')->leftJoin('labels','labels.id','=','supplies_labels.label_id')->pluck('label_id')->toArray();
-        $e_label = EquipmentLabel::whereIn('equipment_id',$equipment_list)->where('equipment_labels.label_category_id','2')->leftJoin('labels','labels.id','=','equipment_labels.label_id')->pluck('label_id')->toArray();
+        $e_label = EquipmentLabel::whereIn('equipment_id',$equipment_id_list)->where('equipment_labels.label_category_id','2')->leftJoin('labels','labels.id','=','equipment_labels.label_id')->pluck('label_id')->toArray();
+
         $label = array_unique(array_merge($s_label,$e_label));
         $label_list = LabelService::getLabelSelectList(2);
         foreach ($label_list as $key => $value){

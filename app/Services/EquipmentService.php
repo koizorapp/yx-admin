@@ -222,7 +222,7 @@ class EquipmentService extends CoreService
                     'label_id' => $value['id'],
                     'equipment_id' => $equipment->id,
                     'center_id' => $equipment->center_id,
-                    'label_category_id' => $value['id'],
+                    'label_category_id' => $value['label_category_id'],
                 ];
                 $equipment_label = EquipmentLabel::firstOrCreate($equipment_label_data);
                 if(!$equipment_label){
