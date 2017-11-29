@@ -106,6 +106,10 @@ class ProjectService extends CoreService
         $project->show_considerations = $other_data['considerations'];
         $project->show_adverse_reaction = $other_data['adverse_reaction'];
         $project->show_remark = $other_data['remark'];
+
+        //价格
+        $project->market_price = $project->market_price == 0 ? '' : $project->market_price;
+        $project->member_price = $project->member_price == 0 ? '' : $project->member_price;
         return $project->toArray();
     }
 

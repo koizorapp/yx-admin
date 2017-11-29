@@ -13,6 +13,7 @@ use App\Models\Center;
 use App\Models\Clinics;
 use App\Models\ClinicsGroup;
 use App\Models\Equipment;
+use App\Models\EquipmentLabel;
 use App\Models\Label;
 use App\Models\Module;
 use App\Models\ModuleClinics;
@@ -23,6 +24,7 @@ use App\Models\ModuleSupplies;
 use App\Models\Personnel;
 use App\Models\Project;
 use App\Models\Supplies;
+use App\Models\SuppliesLabel;
 use Illuminate\Support\Facades\DB;
 
 class ModuleService extends CoreService
@@ -534,9 +536,19 @@ class ModuleService extends CoreService
                 $clinics_center_list[$key]['status'] = 1;
             }
         }
+        $s_label = SuppliesLabel::whereIn('supplies_id',$supplies_id_list)->where('supplies_labels.label_category_id','2')->leftJoin('labels','labels.id','=','supplies_labels.label_id')->pluck('label_id')->toArray();
+        $e_label = EquipmentLabel::whereIn('equipment_id',$equipment_list)->where('equipment_labels.label_category_id','2')->leftJoin('labels','labels.id','=','equipment_labels.label_id')->pluck('label_id')->toArray();
+        $label = array_unique(array_merge($s_label,$e_label));
+        $label_list = LabelService::getLabelSelectList(0);
+        foreach ($label_list as $key => $value){
+            $label_list[$key]['status'] = 0;
+            if(in_array($value['id'],$label)){
+                $label_list[$key]['status'] = 1;
+            }
+        }
 
 
-        return ['gender' => $gender ,'min_age_limit' => $min_age ,'max_age_limit' => $max_age ,'clinics_list' => $clinics_center_list];
+        return ['gender' => $gender ,'min_age_limit' => $min_age ,'max_age_limit' => $max_age ,'clinics_list' => $clinics_center_list ,'module_contraindications_labels' => $label_list];
     }
 
     public static function getModuleJobGradesList($module_id_list)

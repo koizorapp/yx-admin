@@ -145,6 +145,11 @@ class EquipmentService extends CoreService
         $equipment->min_age_limit = $equipment->min_age_limit == 0 ? '' : $equipment->min_age_limit;
         $equipment->max_age_limit = $equipment->max_age_limit == 151 ? '' : $equipment->max_age_limit;
 
+        //价格
+        $equipment->once_cost = $equipment->once_cost == 0 ? '' : $equipment->once_cost;
+        $equipment->market_price = $equipment->market_price == 0 ? '' : $equipment->market_price;
+        $equipment->purchase_price = $equipment->purchase_price == 0 ? '' : $equipment->purchase_price;
+
         return $equipment->toArray();
     }
     public static function addAndEditEquipment($data)

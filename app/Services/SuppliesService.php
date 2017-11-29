@@ -139,6 +139,11 @@ class SuppliesService extends CoreService
 
         $supplies->min_age_limit = $supplies->min_age_limit == 0 ? '' : $supplies->min_age_limit;
         $supplies->max_age_limit = $supplies->max_age_limit == 151 ? '' : $supplies->max_age_limit;
+
+        //价格
+        $supplies->once_cost = $supplies->once_cost == 0 ? '' : $supplies->once_cost;
+        $supplies->market_price = $supplies->market_price == 0 ? '' : $supplies->market_price;
+        $supplies->purchase_price = $supplies->purchase_price == 0 ? '' : $supplies->purchase_price;
         return $supplies->toArray();
     }
 
