@@ -160,6 +160,19 @@ class EquipmentService extends CoreService
             return self::currentReturnFalse([],'设备代码重复,请核实.');
         }
 
+        //校验数字类型字段
+        if(!empty($data['market_price']) && !is_numeric($data['market_price'])){
+            return self::currentReturnFalse([],'市场价格请填写数字格式,例如 100000.00');
+        }
+
+        if(!empty($data['purchase_price']) && !is_numeric($data['purchase_price'])){
+            return self::currentReturnFalse([],'采购价格请填写数字格式,例如 100000.00');
+        }
+
+        if(!empty($data['once_cost']) && !is_numeric($data['once_cost'])){
+            return self::currentReturnFalse([],'单次成本请填写数字格式,例如 100000.00');
+        }
+
         //设备名字重复自动加一
         $check_name = Equipment::where('name',$data['name'])->where('center_id',$data['center_id'])->max('name_index');
         $name_index = 0;

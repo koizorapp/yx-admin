@@ -121,41 +121,25 @@ class ModuleService extends CoreService
         $equipment_considerations   = '';
         $equipment_adverse_reaction = '';
         if(!empty($supplies)){
-            $supplies_considerations = collect($supplies)->pluck('considerations')->implode('considerations',',');
-//                $supplies_considerations = collect($supplies)->pluck('considerations')->all();
-            $supplies_adverse_reaction = collect($supplies)->pluck('adverse_reaction')->implode('adverse_reaction',',');
-//                $supplies_adverse_reaction = collect($supplies)->pluck('adverse_reaction')->all();
+//            $supplies_considerations = collect($supplies)->pluck('considerations')->implode('considerations',',');
+            $supplies_considerations = collect($supplies)->where('considerations','<>','')->implode('considerations',',');
+//            $supplies_adverse_reaction = collect($supplies)->pluck('adverse_reaction')->implode('adverse_reaction',',');
+            $supplies_adverse_reaction = collect($supplies)->where('adverse_reaction','<>','')->implode('adverse_reaction',',');
         }
 
         if(!empty($equipment)){
-            $equipment_considerations = collect($equipment)->pluck('considerations')->implode('considerations',',');
-//                $equipment_considerations = collect($equipment)->pluck('considerations')->all();
-            $equipment_adverse_reaction = collect($equipment)->pluck('adverse_reaction')->implode('adverse_reaction',',');
-//                $equipment_adverse_reaction = collect($equipment)->pluck('adverse_reaction')->all();
+            $equipment_considerations = collect($equipment)->where('considerations','<>','')->implode('considerations',',');
+//            $equipment_considerations = collect($equipment)->pluck('considerations')->implode('considerations',',');
+            $equipment_adverse_reaction = collect($equipment)->where('adverse_reaction','<>','')->implode('adverse_reaction',',');
+//            $equipment_adverse_reaction = collect($equipment)->pluck('adverse_reaction')->implode('adverse_reaction',',');
         }
-
         if($module){
-            $module_considerations = collect($module)->pluck('considerations')->implode('considerations',',');
-            $module_adverse_reaction = collect($module)->pluck('adverse_reaction')->implode('adverse_reaction',',');
-        }
+//            $module_considerations = collect($module)->pluck('considerations')->implode('considerations',',');
+            $module_considerations = collect($module)->where('considerations','<>','')->implode('considerations',',');
 
-        /*if($supplies_considerations){
-            $s_considerations = $supplies_considerations;
+//            $module_adverse_reaction = collect($module)->pluck('adverse_reaction')->implode('adverse_reaction',',');
+            $module_adverse_reaction = collect($module)->where('adverse_reaction','<>','')->implode('adverse_reaction',',');
         }
-
-        if($equipment_considerations){
-            $e_considerations = $equipment_considerations;
-        }
-
-        if($supplies_adverse_reaction){
-            $s_adverse_reaction = $supplies_adverse_reaction;
-        }
-
-        if($equipment_adverse_reaction){
-            $e_adverse_reaction = $equipment_adverse_reaction;
-        }*/
-//            $module->show_considerations = array_values($considerations);
-//            $module->show_adverse_reaction = array_values($adverse_reaction);
 
         $considerations = [];
         $adverse_reaction = [];
@@ -192,9 +176,9 @@ class ModuleService extends CoreService
         }else{
             $module_considerations = collect($considerations)->pluck('content')->implode('content',',');
             $module_adverse_reaction = collect($adverse_reaction)->pluck('content')->implode('content',',');
-
             $project = Project::where('id',$project_id)->first(['considerations','adverse_reaction','remark']);
-
+            $p_considerations = [];
+            $p_adverse_reaction = [];
             if($project->considerations){
                 $p_considerations[1]['title'] = '该项目的注意事项:';
                 $p_considerations[1]['content'] = $project->considerations;
@@ -222,7 +206,7 @@ class ModuleService extends CoreService
                 $remark[1]['content'] = $project->remark;
             }
 
-            $module_remark = collect($module)->pluck('remark')->implode('remark',',');
+            $module_remark = collect($module)->where('remark','<>','')->implode('remark',',');
             if($module_remark){
                 $remark[2]['title'] = '所选模块的备注:';
                 $remark[2]['content'] = $module_remark;
