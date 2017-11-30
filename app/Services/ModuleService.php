@@ -157,7 +157,8 @@ class ModuleService extends CoreService
 //            $module->show_considerations = array_values($considerations);
 //            $module->show_adverse_reaction = array_values($adverse_reaction);
 
-
+        $considerations = [];
+        $adverse_reaction = [];
         if($module_considerations){
             $considerations[1]['title'] = '该模块注意事项:';
             $considerations[1]['content'] = $module_considerations;
