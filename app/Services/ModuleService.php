@@ -482,7 +482,7 @@ class ModuleService extends CoreService
     {
         if(empty($supplies_list) && empty($equipment_list)){
             $clinics_center_list = Clinics::where('center_id',$center_id)->get(['id','name','mark'])->toArray();
-            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => '' ,'clinics_list' => $clinics_center_list];
+            return ['gender' => 0 ,'min_age_limit' => '' ,'max_age_limit' => '' ,'clinics_list' => $clinics_center_list ,'module_contraindications_labels' => []];
         }
         $equipment_id_list = collect($equipment_list)->pluck('id')->all();
         $supplies_id_list  = collect($supplies_list)->pluck('id')->all();
@@ -532,7 +532,6 @@ class ModuleService extends CoreService
                 $label_list[$key]['status'] = 1;
             }
         }
-
 
         return ['gender' => $gender ,'min_age_limit' => $min_age ,'max_age_limit' => $max_age ,'clinics_list' => $clinics_center_list ,'module_contraindications_labels' => $label_list];
     }
