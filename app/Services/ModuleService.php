@@ -85,7 +85,7 @@ class ModuleService extends CoreService
         $module->module_indications_labels    = isset($module_label[1]) ? $module_label[1] : [];
         $module->module_function_labels          = isset($module_label[3]) ? $module_label[3] : [];
         $module->gender_limit_name               = self::$gender_data[$module->gender_limit];
-
+        $module->expected_cost  = $module->expected_cost == 0 ? '' : $module->expected_cost;
         //年龄限制处理
         $module->age_limit = self::ageLimit($module->min_age_limit,$module->max_age_limit);
 

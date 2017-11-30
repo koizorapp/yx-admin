@@ -91,7 +91,7 @@ class ProjectService extends CoreService
         $project->module_function_labels = $module_list['module_function_labels'];
         $project->gender_limit_name = $module_list['gender_limit_name'];
         $project->age_limit = $module_list['age_limit'];
-        $project->expected_cost = $module_list['expected_cost'];
+        $project->expected_cost = $module_list['expected_cost'] == 0 ? '' : $module_list['expected_cost'];
         $project->module_list_view = collect($project->module_list)->collapse()->all();
 
         //上一条
