@@ -26,7 +26,7 @@ class LabelService extends CoreService
         foreach (self::$labelCategory as $key => $value){
             $list[$key]['id'] = $key;
             $list[$key]['name'] = $value;
-            $list[$key]['list'] = $labelList = Label::where('label_category_id',$key)->get(['id','name'])->toArray();
+            $list[$key]['list'] = $labelList = Label::where('label_category_id',$key)->get(['id','name','label_category_id'])->toArray();
         }
         $list = array_values($list);
         return $list;
