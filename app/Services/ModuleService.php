@@ -643,12 +643,16 @@ class ModuleService extends CoreService
                 if(count($value) == 1){
                     $tmp_module_id_list[] = $value[0]['module_id'];
                     continue;
-                }
-                $m_id_list = collect($value)->pluck('module_id')->all();
-                $contraindications = self::getModuleLabelListByLabelCategoryId($m_id_list,2);
-                foreach ($value as $k => $v){
-                    $module_contraindications_label_list[$k]['title'] = $key . '-' . ($k+1) . ":";
-                    $module_contraindications_label_list[$k]['list'] = $contraindications;
+                }else{
+                    foreach ($value as $k => $v){
+//                        $m_id_list = collect($value)->pluck('module_id')->all();
+                        $contraindications = self::getModuleLabelListByLabelCategoryId([$v['module_id']],2);
+                        if(empty($contraindications)){
+                            continue;
+                        }
+                        $module_contraindications_label_list[$k]['title'] = $key . '-' . ($k+1) . ":";
+                        $module_contraindications_label_list[$k]['list'] =  $contraindications;
+                    }
                 }
             }
             $tmp_contraindications = self::getModuleLabelListByLabelCategoryId($tmp_module_id_list,2);
