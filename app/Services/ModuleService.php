@@ -647,7 +647,7 @@ class ModuleService extends CoreService
                 $m_id_list = collect($value)->pluck('module_id')->all();
                 $contraindications = self::getModuleLabelListByLabelCategoryId($m_id_list,2);
                 foreach ($value as $k => $v){
-                    $module_contraindications_label_list[$k]['title'] = $key . '-' . ($k+1) . ':' . $v['name'];
+                    $module_contraindications_label_list[$k]['title'] = $key . '-' . ($k+1) . ":";
                     $module_contraindications_label_list[$k]['list'] = $contraindications;
                 }
             }
