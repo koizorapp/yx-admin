@@ -127,7 +127,7 @@ class EquipmentService extends CoreService
         $equipment->equipment_indications_labels = $indications;
         $equipment->equipment_contraindications_labels = $contraindications;
         $equipment->center_name  = Center::where('id',$equipment->center_id)->value('name');
-        $equipment->clinics_name = Clinics::where('id',$equipment->clinics)->value('name');
+        $equipment->clinics_name = Clinics::where('id',$equipment->clinics_id)->value('name');
         $equipment->gender_limit_name = self::$gender_data[$equipment->gender_limit];
         $equipment->age_limit = ModuleService::ageLimit($equipment->min_age_limit,$equipment->max_age_limit);
 
