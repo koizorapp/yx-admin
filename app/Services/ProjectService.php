@@ -79,7 +79,7 @@ class ProjectService extends CoreService
         }
         $project->module_list = array_values($project_module_list);
 
-        $module_list = self::getModuleDataForProject($module_list);
+        $module_list = self::getModuleDataForProject($module_list,$project_id);
         $project->job_grades = $module_list['job_grades'];
         $project->module_equipment = $module_list['module_equipment'];
         $project->module_supplies = $module_list['module_supplies'];
@@ -260,10 +260,10 @@ class ProjectService extends CoreService
         return true;
     }
 
-    public static function getModuleDataForProject($module_list)
+    public static function getModuleDataForProject($module_list,$project_id=null)
     {
         $module_id_list = collect($module_list)->collapse()->pluck('id')->all();
-        $module_list = ModuleService::getModuleDetailForProject($module_id_list);
+        $module_list = ModuleService::getModuleDetailForProject($module_id_list,$project_id);
         return $module_list;
     }
 

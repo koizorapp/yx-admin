@@ -23,6 +23,7 @@ use App\Models\ModuleLabel;
 use App\Models\ModuleSupplies;
 use App\Models\Personnel;
 use App\Models\Project;
+use App\Models\ProjectModule;
 use App\Models\Supplies;
 use App\Models\SuppliesLabel;
 use Illuminate\Support\Facades\DB;
@@ -575,6 +576,12 @@ class ModuleService extends CoreService
         return $list;
     }
 
+    public static function getModuleLabelListByLabelCategoryId($module_id_list,$label_category_id)
+    {
+        $list = ModuleLabel::leftJoin('labels','labels.id','=','module_labels.label_id')->where('labels.label_category_id',$label_category_id)->whereIn('module_id',$module_id_list)->groupBy(DB::raw('yx_labels.id'))->select(DB::raw('yx_labels.id,yx_labels.name,yx_labels.label_category_id'))->get()->toArray();
+        return $list;
+    }
+
     public static function getPersonnelList($job_grade_list)
     {
         $job_grade_id_list = collect($job_grade_list)->pluck('id')->all();
@@ -595,7 +602,7 @@ class ModuleService extends CoreService
         return $age_limit;
     }
 
-    public static function getModuleDetailForProject($module_id_list)
+    public static function getModuleDetailForProject($module_id_list,$project_id)
     {
         $data = [];
         $module          = Module::whereIn('id',$module_id_list)->get(['whether_medical','min_age_limit','max_age_limit','gender_limit','expected_cost'])->toArray();
@@ -622,7 +629,36 @@ class ModuleService extends CoreService
         $data['whether_medical_name']            = in_array(1,$whether_medical) ? '是' : '否';
         $module_label                            = self::getModuleLabelList($module_id_list);
         $data['module_working_part_labels']      = isset($module_label[4]) ? $module_label[4] : [];
-        $data['module_contraindications_labels'] = isset($module_label[2]) ? $module_label[2] : [];
+
+        //并行模块处理禁忌症
+        $module_contraindications_label_list = [];
+        if($project_id){
+            $module_list = ProjectModule::leftJoin('modules','project_modules.module_id','=','modules.id')->where('project_id',$project_id)->get(['name','module_id','sort'])->toArray();
+            $module_list = collect($module_list)->groupBy('sort')->sortBy(function($item,$key){
+                return count($item);
+            })->toArray();
+
+            $tmp_module_id_list = [];
+            foreach ($module_list as $key => $value){
+                if(count($value) == 1){
+                    $tmp_module_id_list[] = $value[0]['module_id'];
+                    continue;
+                }
+                $m_id_list = collect($value)->pluck('module_id')->all();
+                $contraindications = self::getModuleLabelListByLabelCategoryId($m_id_list,2);
+                foreach ($value as $k => $v){
+                    $module_contraindications_label_list[$k]['title'] = $key . '-' . ($k+1) . ':' . $v['name'];
+                    $module_contraindications_label_list[$k]['list'] = $contraindications;
+                }
+            }
+            $tmp_contraindications = self::getModuleLabelListByLabelCategoryId($tmp_module_id_list,2);
+            if(!empty($tmp_contraindications)){
+                array_unshift($module_contraindications_label_list,['title' => '' , 'list' => $tmp_contraindications]);
+            }
+            $data['module_contraindications_labels'] = $module_contraindications_label_list;
+        }else{
+            $data['module_contraindications_labels'] = isset($module_label[2]) ? $module_label[2] : [];
+        }
         $data['module_indications_labels']       = isset($module_label[1]) ? $module_label[1] : [];
         $data['module_function_labels']          = isset($module_label[3]) ? $module_label[3] : [];
         $data['gender_limit_name']               = self::$gender_data[$gender_sum];
